@@ -21,5 +21,12 @@ const (
 type Group struct {
 	gorm.Model
 	Name string `gorm:"type:varchar(50);not null;unique" json:"name"`
-	Type int    `gorm:"type:int;not null" json:"type"`
+	Type uint   `gorm:"type:int;not null" json:"type"`
+}
+
+// GetGroupByID 根据ID获取用户组
+func GetGroupByID(id uint) (Group, error) {
+	var group Group
+	err := DB.Where("id = ?", id).First(&group).Error
+	return group, err
 }

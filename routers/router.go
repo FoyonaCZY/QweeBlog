@@ -6,8 +6,8 @@ import (
 )
 
 func InitRouter() *gin.Engine {
-	r := gin.Default()
-
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
 	//用户相关
 	user := r.Group("/user")
 	{
