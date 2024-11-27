@@ -11,12 +11,17 @@ type User struct {
 	Nickname     string `gorm:"type:varchar(50);not null;" json:"nickname"`
 	Email        string `gorm:"type:varchar(100);not null;unique" json:"email"`
 	Password     string `gorm:"type:varchar(100);not null" json:"password"`
+	Avatar       string `gorm:"type:varchar(100);not null" json:"avatar"`
 	GroupID      uint   `gorm:"type:int;not null" json:"group_id"`
 	ReceiveEmail bool   `gorm:"type:boolean;not null" json:"receive_email"`
 
 	// 关联模型
 	Group Group `gorm:"save_associations:false:false"`
 }
+
+var (
+	DefaultAvatar = "https://z1.ax1x.com/2023/08"
+)
 
 // GetUserByID 根据ID获取用户
 func GetUserByID(id uint) (User, error) {
@@ -38,6 +43,14 @@ func (user *User) SetPassword(password string) error {
 	if err != nil {
 		return err
 	}
-	user.Password = string(passwordHash)
+	user.Password = passwordHash
 	return nil
+}
+
+// NewDefaultUser 新建默认用户
+func NewDefaultUser() User {
+	return User{
+		Avatar:       DefaultAvatar,
+		ReceiveEmail: true,
+	}
 }

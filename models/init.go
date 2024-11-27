@@ -63,6 +63,7 @@ func addDefaultGroup() {
 		if err != nil {
 			util.Panic("创建初始用户组失败")
 		}
+		NewUserDefaultGroup = int(group.ID)
 
 		util.Info("创建初始用户组成功")
 	}
@@ -72,16 +73,16 @@ func addDefaultGroup() {
 func addDefaultUser() {
 	_, err := GetUserByID(1)
 	if gorm.IsRecordNotFoundError(err) {
-		user := User{}
+		user := NewDefaultUser()
 		user.Nickname = "admin"
 		user.Email = "admin@iamczy.com"
 		password := util.GenerateRandomString(16)
+		user.GroupID = 1
 		err := user.SetPassword(password)
 		if err != nil {
 			util.Panic("设置初始管理员密码失败")
 		}
-		user.GroupID = 1
-		user.ReceiveEmail = true
+
 		err = DB.Create(&user).Error
 		if err != nil {
 			util.Panic("创建初始管理员失败")

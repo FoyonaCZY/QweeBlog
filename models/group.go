@@ -5,15 +5,15 @@ import (
 )
 
 const (
-	/*
-		用户组类型
-		1:管理员
-		2:用户
-	*/
 	GroupTypeAdmin        = 1
 	GroupTypeUser         = 2
 	DefaultGroupNameAdmin = "管理员"
 	DefaultGroupName      = "普通用户"
+)
+
+var (
+	// NewUserDefaultGroup 新用户默认组
+	NewUserDefaultGroup int
 )
 
 // Group 用户组模型
