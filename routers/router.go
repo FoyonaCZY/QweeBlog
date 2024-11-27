@@ -16,6 +16,12 @@ func InitRouter() *gin.Engine {
 
 		//用户登录
 		user.POST("/login", controllers.UserLogin)
+
+		//获取用户信息
+		user.GET("/info/:id", controllers.UserInfo)
+
+		//更新用户信息
+		user.PUT("/update/:id", controllers.UserUpdate)
 	}
 
 	//protected routes
