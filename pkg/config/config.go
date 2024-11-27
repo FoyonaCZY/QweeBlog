@@ -33,19 +33,19 @@ func Init() {
 	// 读取配置文件
 	cfg, err := ini.Load("pkg/config/config.ini")
 	if err != nil {
-		util.PANIC("打开配置文件失败: " + err.Error())
+		util.Panic("打开配置文件失败: " + err.Error())
 	}
 	Configs = &Config{}
 
 	// 读取Server配置
 	err = cfg.Section("server").MapTo(&Configs.Server)
 	if err != nil {
-		util.PANIC("解析配置文件失败: " + err.Error())
+		util.Panic("解析配置文件失败: " + err.Error())
 	}
 
 	// 读取MySQL配置
 	err = cfg.Section("mysql").MapTo(&Configs.MySQL)
 	if err != nil {
-		util.PANIC("解析配置文件失败: " + err.Error())
+		util.Panic("解析配置文件失败: " + err.Error())
 	}
 }

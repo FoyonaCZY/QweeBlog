@@ -10,11 +10,10 @@ const (
 		1:管理员
 		2:用户
 	*/
-	GroupTypeAdmin = 1
-	GroupTypeUser  = 2
-
+	GroupTypeAdmin        = 1
+	GroupTypeUser         = 2
 	DefaultGroupNameAdmin = "管理员"
-	DefaultGroupName      = "用户"
+	DefaultGroupName      = "普通用户"
 )
 
 // Group 用户组模型

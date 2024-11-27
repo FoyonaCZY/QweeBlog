@@ -20,9 +20,9 @@ func main() {
 
 	//初始化路由配置
 	server := routers.InitRouter()
-	util.INFO("Server is running on port: " + strconv.Itoa(config.Configs.Server.Port))
+	util.Info("Server is running on port: " + strconv.Itoa(config.Configs.Server.Port))
 
-	util.INFO("初始化完成")
+	util.Info("初始化完成")
 	//启动服务
 	err := server.Run(":" + strconv.Itoa(config.Configs.Server.Port))
 	if err != nil {

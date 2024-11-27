@@ -17,20 +17,20 @@ func Println(prefix, msg string) {
 		msg)
 }
 
-func INFO(format string, v ...interface{}) {
-	Println("INFO", fmt.Sprintf(format, v...))
+func Info(format string, v ...interface{}) {
+	Println("Info", fmt.Sprintf(format, v...))
 }
 
-func ERROR(format string, v ...interface{}) {
-	Println("ERROR", fmt.Sprintf(format, v...))
+func Error(format string, v ...interface{}) {
+	Println("Error", fmt.Sprintf(format, v...))
 }
 
-func WARNING(format string, v ...interface{}) {
-	Println("WARNING", fmt.Sprintf(format, v...))
+func Warning(format string, v ...interface{}) {
+	Println("Warning", fmt.Sprintf(format, v...))
 }
 
-func PANIC(format string, v ...interface{}) {
+func Panic(format string, v ...interface{}) {
 	msg := fmt.Sprintf(format, v...)
-	Println("PANIC", msg)
+	Println("Panic", msg)
 	panic(msg)
 }
