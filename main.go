@@ -8,11 +8,11 @@ import (
 
 func main() {
 	//读取配置文件
-	cfg := config.InitConfig()
+	config.InitConfig()
 
 	//初始化路由配置
 	server := routers.InitRouter()
-	err := server.Run(":" + strconv.Itoa(cfg.ServerPort))
+	err := server.Run(":" + strconv.Itoa(config.Configs.ServerPort))
 	if err != nil {
 		return
 	}
