@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func JwtAuthMiddleware() gin.HandlerFunc {
+func JwtAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		err := auth.TokenValid(c)
 		if err != nil {

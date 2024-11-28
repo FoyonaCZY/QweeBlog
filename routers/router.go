@@ -24,11 +24,16 @@ func InitRouter() *gin.Engine {
 		//用户登录
 		user.POST("/login", controllers.UserLogin)
 
-		//获取用户信息
-		user.GET("/info/:id", middlewares.JwtAuthMiddleware(), controllers.UserInfo)
+		userProtected := user.Group("")
+		{
+			userProtected.Use(middlewares.JwtAuth())
 
-		//更新用户信息
-		user.PUT("/update/:id", middlewares.JwtAuthMiddleware(), controllers.UserUpdate)
+			//获取用户信息
+			user.GET("/info/:id", controllers.UserInfo)
+
+			//更新用户信息
+			user.PUT("/update/:id", controllers.UserUpdate)
+		}
 	}
 
 	/*
@@ -45,8 +50,6 @@ func InitRouter() *gin.Engine {
 		*/
 		posts := v1.Group("/posts")
 		{
-			//发布文章
-			posts.POST("/publish", middlewares.JwtAuthMiddleware(), controllers.PostPublish)
 
 			//获取文章列表
 			posts.GET("/list", controllers.PostList)
@@ -54,11 +57,19 @@ func InitRouter() *gin.Engine {
 			//获取文章详情
 			posts.GET("/detail/:id", controllers.PostDetail)
 
-			//删除文章
-			posts.DELETE("/delete/:id", middlewares.JwtAuthMiddleware(), controllers.PostDelete)
+			postProtected := posts.Group("")
+			{
+				postProtected.Use(middlewares.JwtAuth())
 
-			//更新文章
-			posts.PUT("/update/:id", middlewares.JwtAuthMiddleware(), controllers.PostUpdate)
+				//发布文章
+				posts.POST("/publish", controllers.PostPublish)
+
+				//删除文章
+				posts.DELETE("/delete/:id", controllers.PostDelete)
+
+				//更新文章
+				posts.PUT("/update/:id", controllers.PostUpdate)
+			}
 		}
 
 		/*
