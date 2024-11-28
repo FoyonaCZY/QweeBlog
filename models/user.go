@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+	"fmt"
 	"github.com/FoyonaCZY/QweeBlog/util"
 	"github.com/jinzhu/gorm"
 )
@@ -20,7 +22,7 @@ type User struct {
 }
 
 var (
-	DefaultAvatar = "https://z1.ax1x.com/2023/08"
+	DefaultAvatar = "https://z1.ax1x.com/2023/08/22/pPJ6geO.jpg"
 )
 
 // GetUserByID 根据ID获取用户
@@ -38,7 +40,12 @@ func GetUserByEmail(email string) (User, error) {
 }
 
 // BeforeCreate 创建用户前的钩子, 对密码进行哈希
-func (user *User) BeforeCreate(*gorm.DB) (err error) {
+func (user *User) BeforeCreate() (err error) {
+	// 验证邮箱是否存在, 防止ID无效自增
+	if emailExist(user.Email) {
+		return errors.New(fmt.Sprintf("邮箱 %s 已存在", user.Email))
+	}
+
 	passwordHash, err := util.HashPassword(user.Password)
 	if err != nil {
 		return err
@@ -48,7 +55,7 @@ func (user *User) BeforeCreate(*gorm.DB) (err error) {
 }
 
 // BeforeSave 保存用户前的钩子, 对密码进行哈希
-func (user *User) BeforeSave(*gorm.DB) (err error) {
+func (user *User) BeforeSave() (err error) {
 	passwordHash, err := util.HashPassword(user.Password)
 	if err != nil {
 		return err
@@ -64,4 +71,9 @@ func NewDefaultUser() User {
 		Avatar:       DefaultAvatar,
 		ReceiveEmail: true,
 	}
+}
+
+func emailExist(email string) bool {
+	_, err := GetUserByEmail(email)
+	return err != nil
 }

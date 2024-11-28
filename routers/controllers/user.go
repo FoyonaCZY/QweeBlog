@@ -16,13 +16,13 @@ func UserRegister(c *gin.Context) {
 		if err != nil {
 			util.Error(fmt.Sprintf("用户注册失败: %s", err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "internal server error",
+				"message": fmt.Sprintf("用户注册失败: %s", err.Error()),
 			})
 		} else {
 			if res.ID == 0 {
 				util.Info(fmt.Sprintf("用户注册失败, 参数错误: %s", request.Email))
 				c.JSON(http.StatusBadRequest, gin.H{
-					"message": "bad request",
+					"message": fmt.Sprintf("用户注册失败, 参数错误: %s", request.Email),
 				})
 				return
 			}
@@ -32,7 +32,7 @@ func UserRegister(c *gin.Context) {
 	} else {
 		util.Error(fmt.Sprintf("用户注册失败，参数错误: %s", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "bad request",
+			"message": fmt.Sprintf("用户注册失败，参数错误: %s", err.Error()),
 		})
 	}
 }
@@ -48,7 +48,7 @@ func UserInfo(c *gin.Context) {
 	if id == "" {
 		util.Error("用户信息获取失败，参数错误")
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "bad request",
+			"message": "用户信息获取失败，参数错误",
 		})
 		return
 	}
@@ -57,7 +57,7 @@ func UserInfo(c *gin.Context) {
 	if err != nil {
 		util.Error(fmt.Sprintf("用户信息获取失败，参数错误: %s", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "bad request",
+			"message": fmt.Sprintf("用户信息获取失败，参数错误: %s", err.Error()),
 		})
 		return
 	}
@@ -66,7 +66,7 @@ func UserInfo(c *gin.Context) {
 	if err != nil {
 		util.Error(fmt.Sprintf("用户信息获取失败: %s", err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "internal server error",
+			"message": fmt.Sprintf("用户信息获取失败: %s", err.Error()),
 		})
 	} else {
 		util.Info(fmt.Sprintf("用户信息获取成功: %s", id))
