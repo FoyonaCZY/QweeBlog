@@ -13,7 +13,7 @@ const (
 
 var (
 	// NewUserDefaultGroup 新用户默认组
-	NewUserDefaultGroup int
+	NewUserDefaultGroup uint
 )
 
 // Group 用户组模型

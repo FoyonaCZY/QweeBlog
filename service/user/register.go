@@ -1,0 +1,61 @@
+package user
+
+import (
+	"github.com/FoyonaCZY/QweeBlog/models"
+	"strings"
+)
+
+const letterRunes = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+"
+
+type RegisterRequest struct {
+	Nickname     string `json:"nickname" binding:"required,min=2,max=50"`
+	Email        string `json:"email" binding:"required,email"`
+	Password     string `json:"password" binding:"required,min=6,max=20"`
+	ReceiveEmail bool   `json:"receive_email"`
+}
+
+type RegisterResponse struct {
+	ID uint `json:"id"`
+}
+
+// Register 用户注册
+func (req *RegisterRequest) Register() (RegisterResponse, error) {
+	if !ValidateUserRegisterReq(*req) {
+		return RegisterResponse{}, nil
+	}
+
+	user := models.NewDefaultUser()
+	user.Nickname = req.Nickname
+	user.Email = req.Email
+	user.Password = req.Password
+	user.ReceiveEmail = req.ReceiveEmail
+	err := models.DB.Create(&user).Error
+	if err != nil {
+		return RegisterResponse{}, err
+	}
+	return RegisterResponse{ID: user.ID}, nil
+}
+
+// ValidateUserRegisterReq 验证用户注册请求
+func ValidateUserRegisterReq(req RegisterRequest) bool {
+	//验证邮箱长度
+	if len(req.Email) < 5 || len(req.Email) > 100 {
+		return false
+	}
+
+	//验证昵称长度
+	if len(req.Nickname) < 2 || len(req.Nickname) > 50 {
+		return false
+	}
+
+	//验证密码是否只含有合法字符
+	password := req.Password
+	for _, c := range password {
+		if !strings.ContainsRune(letterRunes, c) {
+			return false
+		}
+	}
+
+	//验证密码长度
+	return len(password) >= 8 && len(password) <= 20
+}

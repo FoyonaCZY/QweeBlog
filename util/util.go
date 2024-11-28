@@ -5,10 +5,10 @@ import (
 	"math/rand"
 )
 
+var letterRunes = []rune("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+")
+
 // GenerateRandomString 生成随机字符串
 func GenerateRandomString(n int) string {
-	var letterRunes = []rune("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+")
-
 	res := make([]rune, n)
 	for i := range res {
 		res[i] = letterRunes[rand.Intn(len(letterRunes))]
