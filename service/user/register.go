@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"github.com/FoyonaCZY/QweeBlog/models"
 	"strings"
 )
@@ -21,13 +22,15 @@ type RegisterResponse struct {
 // Register 用户注册
 func (req *RegisterRequest) Register() (RegisterResponse, error) {
 	if !ValidateUserRegisterReq(*req) {
-		return RegisterResponse{}, nil
+		return RegisterResponse{}, errors.New("参数错误")
 	}
 
 	user := models.NewDefaultUser()
 	user.Nickname = req.Nickname
 	user.Email = req.Email
-	user.Password = req.Password
+	if err := user.SetPassword(req.Password); err != nil {
+		return RegisterResponse{}, errors.New("密码哈希失败")
+	}
 	user.ReceiveEmail = req.ReceiveEmail
 	err := models.DB.Create(&user).Error
 	if err != nil {

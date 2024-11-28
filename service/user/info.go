@@ -7,12 +7,7 @@ type InfoRequest struct {
 }
 
 type InfoResponse struct {
-	ID           uint   `json:"id"`
-	Nickname     string `json:"nickname"`
-	Email        string `json:"email"`
-	Avatar       string `json:"avatar"`
-	GroupID      uint   `json:"group_id"`
-	ReceiveEmail bool   `json:"receive_email"`
+	models.User
 }
 
 // Info 获取用户信息
@@ -21,12 +16,5 @@ func (req *InfoRequest) Info() (InfoResponse, error) {
 	if err != nil {
 		return InfoResponse{}, err
 	}
-	return InfoResponse{
-		ID:           user.ID,
-		Nickname:     user.Nickname,
-		Email:        user.Email,
-		Avatar:       user.Avatar,
-		GroupID:      user.GroupID,
-		ReceiveEmail: user.ReceiveEmail,
-	}, nil
+	return InfoResponse{user}, nil
 }

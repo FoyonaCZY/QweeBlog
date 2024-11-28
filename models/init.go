@@ -57,7 +57,7 @@ func addDefaultGroup() {
 
 		// 创建初始用户用户组
 		group = Group{}
-		group.Name = DefaultGroupName
+		group.Name = DefaultGroupNameUser
 		group.Type = GroupTypeUser
 		err = DB.Create(&group).Error
 		if err != nil {
@@ -79,7 +79,9 @@ func addDefaultUser() {
 		user.Email = "admin@iamczy.com"
 		user.GroupID = 1
 		password := util.GenerateRandomString(16)
-		user.Password = password
+		if err := user.SetPassword(password); err != nil {
+			util.Panic("创建初始管理员失败")
+		}
 		err = DB.Create(&user).Error
 		if err != nil {
 			util.Panic("创建初始管理员失败")

@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/FoyonaCZY/QweeBlog/middlewares"
 	"github.com/FoyonaCZY/QweeBlog/routers/controllers"
 	"github.com/gin-gonic/gin"
 )
@@ -24,10 +25,10 @@ func InitRouter() *gin.Engine {
 		user.POST("/login", controllers.UserLogin)
 
 		//获取用户信息
-		user.GET("/info/:id", controllers.UserInfo)
+		user.GET("/info/:id", middlewares.JwtAuthMiddleware(), controllers.UserInfo)
 
 		//更新用户信息
-		user.PUT("/update/:id", controllers.UserUpdate)
+		user.PUT("/update/:id", middlewares.JwtAuthMiddleware(), controllers.UserUpdate)
 	}
 
 	/*
@@ -37,7 +38,6 @@ func InitRouter() *gin.Engine {
 	*/
 	v1 := r.Group("/api/v1")
 	{
-
 		/*
 
 			文章相关
@@ -46,7 +46,7 @@ func InitRouter() *gin.Engine {
 		posts := v1.Group("/posts")
 		{
 			//发布文章
-			posts.POST("/publish", controllers.PostPublish)
+			posts.POST("/publish", middlewares.JwtAuthMiddleware(), controllers.PostPublish)
 
 			//获取文章列表
 			posts.GET("/list", controllers.PostList)
@@ -55,10 +55,10 @@ func InitRouter() *gin.Engine {
 			posts.GET("/detail/:id", controllers.PostDetail)
 
 			//删除文章
-			posts.DELETE("/delete/:id", controllers.PostDelete)
+			posts.DELETE("/delete/:id", middlewares.JwtAuthMiddleware(), controllers.PostDelete)
 
 			//更新文章
-			posts.PUT("/update/:id", controllers.PostUpdate)
+			posts.PUT("/update/:id", middlewares.JwtAuthMiddleware(), controllers.PostUpdate)
 		}
 
 		/*
@@ -69,7 +69,7 @@ func InitRouter() *gin.Engine {
 		//comments := v1.Group("/comments")
 		//{
 		//	//发布评论
-		//	comments.POST("/publish", controllers.CommentPublish)
+		//	comments.POST("/publish",middlewares.JwtAuthMiddleware(), controllers.CommentPublish)
 		//
 		//	//获取评论列表
 		//	comments.GET("/listall", controllers.CommentListall)
@@ -78,10 +78,10 @@ func InitRouter() *gin.Engine {
 		//	comments.GET("/list/:post_id", controllers.CommentList)
 		//
 		//	//删除评论
-		//	comments.DELETE("/delete/:id", controllers.CommentDelete)
+		//	comments.DELETE("/delete/:id", middlewares.JwtAuthMiddleware(),controllers.CommentDelete)
 		//
 		//	//更新评论
-		//	//comments.PUT("/update/:id", controllers.CommentUpdate)
+		//	//comments.PUT("/update/:id", middlewares.JwtAuthMiddleware(),controllers.CommentUpdate)
 		//}
 		//
 		///*
@@ -92,16 +92,16 @@ func InitRouter() *gin.Engine {
 		//tags := v1.Group("/tags")
 		//{
 		//	//创建标签
-		//	tags.POST("/create", controllers.TagCreate)
+		//	tags.POST("/create", middlewares.JwtAuthMiddleware(),controllers.TagCreate)
 		//
 		//	//获取标签列表
 		//	tags.GET("/list", controllers.TagList)
 		//
 		//	//删除标签
-		//	tags.DELETE("/delete/:id", controllers.TagDelete)
+		//	tags.DELETE("/delete/:id", middlewares.JwtAuthMiddleware(),controllers.TagDelete)
 		//
 		//	//更新标签
-		//	tags.PUT("/update/:id", controllers.TagUpdate)
+		//	tags.PUT("/update/:id", middlewares.JwtAuthMiddleware(),controllers.TagUpdate)
 		//}
 	}
 	return r

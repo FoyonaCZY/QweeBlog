@@ -24,6 +24,12 @@ type Config struct {
 		MaxIdleConns    int    `ini:"maxidleconns"`
 		ConnMaxLifetime int    `ini:"connmaxlifetime"`
 	}
+
+	//Jwt配置
+	Jwt struct {
+		Secret        string `ini:"secret"`
+		TokenLifeTime int    `ini:"tokenexptime"`
+	}
 }
 
 var Configs *Config
@@ -45,6 +51,12 @@ func Init() {
 
 	// 读取MySQL配置
 	err = cfg.Section("mysql").MapTo(&Configs.MySQL)
+	if err != nil {
+		util.Panic("解析配置文件失败: " + err.Error())
+	}
+
+	// 读取Jwt配置
+	err = cfg.Section("jwt").MapTo(&Configs.Jwt)
 	if err != nil {
 		util.Panic("解析配置文件失败: " + err.Error())
 	}

@@ -7,8 +7,9 @@ import (
 const (
 	GroupTypeAdmin        = 1
 	GroupTypeUser         = 2
+	GroupTypeEditor       = 3
 	DefaultGroupNameAdmin = "管理员"
-	DefaultGroupName      = "普通用户"
+	DefaultGroupNameUser  = "普通用户"
 )
 
 var (

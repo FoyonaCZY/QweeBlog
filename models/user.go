@@ -28,39 +28,29 @@ var (
 // GetUserByID 根据ID获取用户
 func GetUserByID(id uint) (User, error) {
 	var user User
-	err := DB.Where("id = ?", id).First(&user).Error
+	err := DB.Where("id = ?", id).Preload("Group").First(&user).Error
 	return user, err
 }
 
 // GetUserByEmail 根据邮箱获取用户
 func GetUserByEmail(email string) (User, error) {
 	var user User
-	err := DB.Where("email = ?", email).First(&user).Error
+	err := DB.Where("email = ?", email).Preload("Group").First(&user).Error
 	return user, err
 }
 
-// BeforeCreate 创建用户前的钩子, 对密码进行哈希
+// BeforeCreate 创建用户前的钩子
 func (user *User) BeforeCreate() (err error) {
 	// 验证邮箱是否存在, 防止ID无效自增
-	if emailExist(user.Email) {
-		return errors.New(fmt.Sprintf("邮箱 %s 已存在", user.Email))
-	}
-
-	passwordHash, err := util.HashPassword(user.Password)
-	if err != nil {
+	if err := emailExist(user.Email); err != nil {
 		return err
 	}
-	user.Password = passwordHash
+
 	return nil
 }
 
-// BeforeSave 保存用户前的钩子, 对密码进行哈希
+// BeforeSave 保存用户前的钩子
 func (user *User) BeforeSave() (err error) {
-	passwordHash, err := util.HashPassword(user.Password)
-	if err != nil {
-		return err
-	}
-	user.Password = passwordHash
 	return nil
 }
 
@@ -73,7 +63,19 @@ func NewDefaultUser() User {
 	}
 }
 
-func emailExist(email string) bool {
-	_, err := GetUserByEmail(email)
-	return err != nil
+func emailExist(email string) error {
+	if _, err := GetUserByEmail(email); gorm.IsRecordNotFoundError(err) {
+		return nil
+	}
+
+	return errors.New(fmt.Sprintf("邮箱 %s 已存在", email))
+}
+
+func (user *User) SetPassword(password string) error {
+	passwordHash, err := util.HashPassword(password)
+	if err != nil {
+		return err
+	}
+	user.Password = passwordHash
+	return nil
 }
