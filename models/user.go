@@ -74,6 +74,6 @@ func (user *User) SetPassword(password string) error {
 	return nil
 }
 
-func DeleteUserByID(ID uint) error {
-	return DB.Delete(User{}, ID).Error
+func DeleteUserByID(ID uint) int64 {
+	return DB.Delete(User{}, ID).RowsAffected
 }
