@@ -149,6 +149,13 @@ func UserDelete(c *gin.Context) {
 	}
 
 	id, err := strconv.Atoi(c.Param("id"))
+	if id == 1 {
+		util.Error(fmt.Sprintf("用户信息删除失败，无法删除初始管理员"))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "用户信息删除失败，无法删除初始管理员",
+		})
+		return
+	}
 	if err != nil {
 		util.Error(fmt.Sprintf("用户信息删除失败，参数错误: %s", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{

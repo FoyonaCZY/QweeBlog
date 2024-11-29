@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-var letterRunes = []rune("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+")
+var letterRunes = []rune("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 // GenerateRandomString 生成随机字符串
 func GenerateRandomString(n int) string {
