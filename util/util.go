@@ -3,6 +3,7 @@ package util
 import (
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
+	"regexp"
 )
 
 var letterRunes = []rune("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+")
@@ -25,4 +26,12 @@ func HashPassword(str string) (string, error) {
 // ComparePassword 比较密码哈希
 func ComparePassword(hashed string, plain string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(plain))
+}
+
+// IsValidEmail 验证邮箱格式
+func IsValidEmail(email string) bool {
+	// 邮箱正则表达式
+	regex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	re := regexp.MustCompile(regex)
+	return re.MatchString(email)
 }

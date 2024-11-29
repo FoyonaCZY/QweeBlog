@@ -32,7 +32,10 @@ func InitRouter() *gin.Engine {
 			user.GET("/info/:id", controllers.UserInfo)
 
 			//更新用户信息
-			user.PUT("/update/:id", controllers.UserUpdate)
+			user.PUT("/update", controllers.UserUpdate)
+
+			//删除用户
+			user.DELETE("/delete/:id", controllers.UserDelete)
 		}
 	}
 

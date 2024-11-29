@@ -1,8 +1,6 @@
 package models
 
 import (
-	"errors"
-	"fmt"
 	"github.com/FoyonaCZY/QweeBlog/util"
 	"github.com/jinzhu/gorm"
 )
@@ -41,11 +39,6 @@ func GetUserByEmail(email string) (User, error) {
 
 // BeforeCreate 创建用户前的钩子
 func (user *User) BeforeCreate() (err error) {
-	// 验证邮箱是否存在, 防止ID无效自增
-	if err := emailExist(user.Email); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -57,19 +50,20 @@ func (user *User) BeforeSave() (err error) {
 // NewDefaultUser 新建默认用户
 func NewDefaultUser() User {
 	return User{
+		Email:        "",
 		GroupID:      NewUserDefaultGroup,
 		Avatar:       DefaultAvatar,
 		ReceiveEmail: true,
 	}
 }
 
-func emailExist(email string) error {
-	if _, err := GetUserByEmail(email); gorm.IsRecordNotFoundError(err) {
-		return nil
-	}
-
-	return errors.New(fmt.Sprintf("邮箱 %s 已存在", email))
-}
+//func emailExist(email string) error {
+//	if _, err := GetUserByEmail(email); gorm.IsRecordNotFoundError(err) {
+//		return nil
+//	}
+//
+//	return errors.New(fmt.Sprintf("邮箱 %s 已存在", email))
+//}
 
 func (user *User) SetPassword(password string) error {
 	passwordHash, err := util.HashPassword(password)
@@ -78,4 +72,8 @@ func (user *User) SetPassword(password string) error {
 	}
 	user.Password = passwordHash
 	return nil
+}
+
+func DeleteUserByID(ID uint) error {
+	return DB.Delete(User{}, ID).Error
 }

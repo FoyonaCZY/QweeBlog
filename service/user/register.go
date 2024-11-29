@@ -3,7 +3,9 @@ package user
 import (
 	"errors"
 	"github.com/FoyonaCZY/QweeBlog/models"
+	"github.com/FoyonaCZY/QweeBlog/util"
 	"strings"
+	"unicode"
 )
 
 const letterRunes = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+"
@@ -48,6 +50,18 @@ func ValidateUserRegisterReq(req RegisterRequest) bool {
 
 	//验证昵称长度
 	if len(req.Nickname) < 2 || len(req.Nickname) > 50 {
+		return false
+	}
+
+	//验证昵称是否含有非法字符
+	for _, c := range req.Nickname {
+		if unicode.IsControl(c) {
+			return false
+		}
+	}
+
+	//验证邮箱是否合法
+	if !util.IsValidEmail(req.Email) {
 		return false
 	}
 
