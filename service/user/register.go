@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"github.com/FoyonaCZY/QweeBlog/models"
+	"github.com/FoyonaCZY/QweeBlog/pkg/mail"
 	"github.com/FoyonaCZY/QweeBlog/util"
 	"strings"
 	"unicode"
@@ -38,6 +39,12 @@ func (req *RegisterRequest) Register() (RegisterResponse, error) {
 	if err != nil {
 		return RegisterResponse{}, err
 	}
+
+	// 发送激活邮件
+	go func() {
+		_ = mail.SendActivationEmail(user.Email)
+	}()
+
 	return RegisterResponse{ID: user.ID}, nil
 }
 

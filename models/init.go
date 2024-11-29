@@ -30,7 +30,7 @@ func Init() {
 
 	DB = db
 
-	DB.AutoMigrate(&User{}, &Post{}, &Comment{}, &Group{}, &GroupMetaData{})
+	DB.AutoMigrate(&User{}, &Post{}, &Comment{}, &Group{})
 
 	util.Info("数据库连接成功")
 
@@ -63,7 +63,6 @@ func addDefaultGroup() {
 		if err != nil {
 			util.Panic("创建初始用户组失败")
 		}
-		DB.Create(&GroupMetaData{DefaultGroup: group.ID})
 
 		util.Info("创建初始用户组成功")
 	}
@@ -78,6 +77,7 @@ func addDefaultUser() {
 		user.Nickname = "admin"
 		user.Email = "admin@iamczy.com"
 		user.GroupID = 1
+		user.Status = UserStatusActive
 		password := util.GenerateRandomString(16)
 		if err := user.SetPassword(password); err != nil {
 			util.Panic("创建初始管理员失败")

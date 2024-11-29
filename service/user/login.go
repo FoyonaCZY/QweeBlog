@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/FoyonaCZY/QweeBlog/models"
 	"github.com/FoyonaCZY/QweeBlog/pkg/auth"
+	"github.com/FoyonaCZY/QweeBlog/pkg/mail"
 	"github.com/FoyonaCZY/QweeBlog/util"
 )
 
@@ -28,6 +29,18 @@ func (req *LoginRequest) Login() (LoginResponse, error) {
 	user, err := models.GetUserByEmail(req.Email)
 	if err != nil {
 		return LoginResponse{}, err
+	}
+
+	//检查用户状态
+	if user.Status == models.UserStatusBanned {
+		return LoginResponse{}, errors.New("用户已被封禁")
+	}
+	if user.Status == models.UserStatusNotActive {
+		//重新发送激活邮件
+		go func() {
+			_ = mail.SendActivationEmail(user.Email)
+		}()
+		return LoginResponse{}, errors.New("用户未激活，已重新发送激活邮件")
 	}
 
 	token, err := auth.GenerateToken(user.ID)

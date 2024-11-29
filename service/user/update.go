@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/FoyonaCZY/QweeBlog/models"
 	"github.com/FoyonaCZY/QweeBlog/util"
-	"github.com/jinzhu/gorm"
 	"strings"
 	"unicode"
 )
@@ -26,11 +25,8 @@ type UpdateResponse struct {
 func (req *UpdateRequest) Update() (UpdateResponse, error) {
 	//查找ID是否有效
 	user, err := models.GetUserByID(req.ID)
-	if gorm.IsRecordNotFoundError(err) {
-		return UpdateResponse{}, errors.New("用户不存在")
-	}
 	if err != nil {
-		return UpdateResponse{}, err
+		return UpdateResponse{}, errors.New("用户不存在")
 	}
 
 	if !ValidateUserUpdateReq(*req) {

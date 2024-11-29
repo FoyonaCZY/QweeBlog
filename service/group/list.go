@@ -1,10 +1,11 @@
 package group
 
-import "github.com/FoyonaCZY/QweeBlog/models"
+import (
+	"github.com/FoyonaCZY/QweeBlog/models"
+)
 
 type ListResponse struct {
-	NewUserDefaultGroup uint           `json:"new_user_default_group"`
-	Groups              []models.Group `json:"groups"`
+	Groups []models.Group `json:"groups"`
 }
 
 func List() (ListResponse, error) {
@@ -13,7 +14,5 @@ func List() (ListResponse, error) {
 	if err != nil {
 		return ListResponse{}, err
 	}
-	return ListResponse{
-		NewUserDefaultGroup: models.GetNewUserDefaultGroup(),
-		Groups:              groups}, nil
+	return ListResponse{Groups: groups}, nil
 }

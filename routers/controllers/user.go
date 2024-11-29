@@ -67,7 +67,7 @@ func UserUpdate(c *gin.Context) {
 	var request user.UpdateRequest
 	if err := c.ShouldBindJSON(&request); err == nil {
 		//验证请求者权限
-		if reqUser.ID != request.ID && reqUser.Group.Type != models.GroupTypeAdmin {
+		if (reqUser.ID != request.ID || reqUser.GroupID != request.GroupID) && reqUser.Group.Type != models.GroupTypeAdmin {
 			util.Error(fmt.Sprintf("用户信息更改失败，权限不足"))
 			c.JSON(http.StatusForbidden, gin.H{
 				"message": "用户信息更改失败，权限不足",
@@ -205,5 +205,56 @@ func UserList(c *gin.Context) {
 	} else {
 		util.Info(fmt.Sprintf("用户信息获取成功"))
 		c.JSON(http.StatusOK, res)
+	}
+}
+
+func UserActivate(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		util.Error(fmt.Sprintf("用户激活失败，参数错误: %s", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("用户激活失败，参数错误: %s", err.Error()),
+		})
+		return
+	}
+	token := c.Query("token")
+
+	reqUser, err := models.GetUserByID(uint(id))
+	if err != nil {
+		util.Error(fmt.Sprintf("用户激活失败，用户不存在: %s", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("用户激活失败，用户不存在: %s", err.Error()),
+		})
+		return
+	}
+
+	if reqUser.Status != models.UserStatusNotActive {
+		util.Error(fmt.Sprintf("用户激活失败，用户已激活或被封禁"))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "用户激活失败，用户已激活或被封禁",
+		})
+		return
+	}
+
+	if reqUser.ActivationToken != token {
+		util.Error(fmt.Sprintf("用户激活失败，激活码错误"))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "用户激活失败，激活码错误",
+		})
+		return
+	}
+
+	reqUser.Status = models.UserStatusActive
+	err = models.DB.Save(&reqUser).Error
+	if err != nil {
+		util.Error(fmt.Sprintf("用户激活失败: %s", err.Error()))
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": fmt.Sprintf("用户激活失败: %s", err.Error()),
+		})
+	} else {
+		util.Info(fmt.Sprintf("用户激活成功: %d", id))
+		c.JSON(http.StatusOK, gin.H{
+			"message": "用户激活成功，请重新登录",
+		})
 	}
 }
