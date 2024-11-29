@@ -28,6 +28,9 @@ func InitRouter() *gin.Engine {
 		{
 			userProtected.Use(middlewares.JwtAuth())
 
+			//获取用户列表
+			user.GET("/list", controllers.UserList)
+
 			//获取用户信息
 			user.GET("/info/:id", controllers.UserInfo)
 
@@ -37,6 +40,33 @@ func InitRouter() *gin.Engine {
 			//删除用户
 			user.DELETE("/delete/:id", controllers.UserDelete)
 		}
+	}
+	/*
+
+		用户组相关
+
+	*/
+	group := r.Group("/group")
+	{
+		group.Use(middlewares.JwtAuth())
+
+		//创建用户组
+		group.POST("/create", controllers.GroupCreate)
+
+		//获取用户组列表
+		group.GET("/list", controllers.GroupList)
+
+		//删除用户组
+		group.DELETE("/delete/:id", controllers.GroupDelete)
+
+		//更新用户组
+		group.PUT("/update", controllers.GroupUpdate)
+
+		//获取用户组信息
+		group.GET("/info/:id", controllers.GroupInfo)
+
+		//修改新注册用户默认组
+		group.PUT("/default/:id", controllers.GroupDefault)
 	}
 
 	/*

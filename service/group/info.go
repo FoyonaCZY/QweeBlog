@@ -1,4 +1,4 @@
-package user
+package group
 
 import "github.com/FoyonaCZY/QweeBlog/models"
 
@@ -7,15 +7,14 @@ type InfoRequest struct {
 }
 
 type InfoResponse struct {
-	models.User
+	models.Group
 }
 
-// Info 获取用户信息
+// Info 获取用户组信息
 func (req *InfoRequest) Info() (InfoResponse, error) {
-	user, err := models.GetUserByID(req.ID)
+	group, err := models.GetGroupByID(req.ID)
 	if err != nil {
 		return InfoResponse{}, err
 	}
-	user.ReceiveEmail = false
-	return InfoResponse{user}, nil
+	return InfoResponse{group}, nil
 }

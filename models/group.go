@@ -12,10 +12,12 @@ const (
 	DefaultGroupNameUser  = "普通用户"
 )
 
-var (
-	// NewUserDefaultGroup 新用户默认组
-	NewUserDefaultGroup uint
-)
+// GroupMetaData 用户组信息模型
+type GroupMetaData struct {
+	gorm.Model
+	//默认用户组
+	DefaultGroup uint `gorm:"type:int;not null" json:"default_group"`
+}
 
 // Group 用户组模型
 type Group struct {
@@ -29,4 +31,29 @@ func GetGroupByID(id uint) (Group, error) {
 	var group Group
 	err := DB.Where("id = ?", id).First(&group).Error
 	return group, err
+}
+
+// DeleteGroupByID 根据ID删除用户组
+func DeleteGroupByID(id uint) int64 {
+	return DB.Where("id = ?", id).Delete(Group{}).RowsAffected
+}
+
+// GetGroups 获取用户组列表
+func GetGroups() ([]Group, error) {
+	var groups []Group
+	err := DB.Find(&groups).Error
+	return groups, err
+}
+
+func GetNewUserDefaultGroup() uint {
+	var groupMetaData GroupMetaData
+	DB.First(&groupMetaData)
+	return groupMetaData.DefaultGroup
+}
+
+func UpdateNewUserDefaultGroup(group uint) {
+	var groupMetaData GroupMetaData
+	DB.First(&groupMetaData)
+	groupMetaData.DefaultGroup = group
+	DB.Save(&groupMetaData)
 }

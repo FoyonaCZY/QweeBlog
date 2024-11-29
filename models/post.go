@@ -45,15 +45,9 @@ func GetPostsByTagNames(tagNames []string) ([]Post, error) {
 	return posts, err
 }
 
-// GetPostsByTagIDs 根据标签ID获取包含所有标签的文章
+// GetPostsByTagIDs 根据多个标签ID文章
 func GetPostsByTagIDs(tagIDs []uint) ([]Post, error) {
 	var posts []Post
-	// 使用 JOIN 查询来查找包含所有标签的文章
-	err := DB.Table("posts").
-		Joins("JOIN post_tags ON posts.id = post_tags.post_id").
-		Where("post_tags.tag_id IN (?)", tagIDs).
-		Group("posts.id").
-		Having("COUNT(DISTINCT post_tags.tag_id) = ?", len(tagIDs)).
-		Find(&posts).Error
+	err := DB.Where("tag_id IN (?)", tagIDs).Find(&posts).Error
 	return posts, err
 }

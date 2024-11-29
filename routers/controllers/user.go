@@ -63,20 +63,22 @@ func UserUpdate(c *gin.Context) {
 		})
 		return
 	}
-	if reqUser.Group.Type != models.GroupTypeAdmin {
-		util.Error(fmt.Sprintf("用户信息更改失败，权限不足"))
-		c.JSON(http.StatusForbidden, gin.H{
-			"message": "用户信息更改失败，权限不足",
-		})
-		return
-	}
+
 	var request user.UpdateRequest
 	if err := c.ShouldBindJSON(&request); err == nil {
 		//验证请求者权限
-		if reqUser.ID != request.ID {
+		if reqUser.ID != request.ID && reqUser.Group.Type != models.GroupTypeAdmin {
 			util.Error(fmt.Sprintf("用户信息更改失败，权限不足"))
 			c.JSON(http.StatusForbidden, gin.H{
 				"message": "用户信息更改失败，权限不足",
+			})
+			return
+		}
+
+		if request.ID == 1 && request.GroupID != 1 {
+			util.Error(fmt.Sprintf("用户信息更改失败，无法更改初始管理员的用户组"))
+			c.JSON(http.StatusForbidden, gin.H{
+				"message": "用户信息更改失败，无法更改初始管理员的用户组",
 			})
 			return
 		}
@@ -172,6 +174,36 @@ func UserDelete(c *gin.Context) {
 		})
 	} else {
 		util.Info(fmt.Sprintf("用户信息删除成功: %d", res.ID))
+		c.JSON(http.StatusOK, res)
+	}
+}
+
+func UserList(c *gin.Context) {
+	//验证请求者权限
+	reqUser, err := auth.CurrentUser(c)
+	if err != nil {
+		util.Error(fmt.Sprintf("用户信息获取失败: %s", err.Error()))
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": fmt.Sprintf("用户信息获取失败: %s", err.Error()),
+		})
+		return
+	}
+	if reqUser.Group.Type != models.GroupTypeAdmin {
+		util.Error(fmt.Sprintf("用户信息获取失败，权限不足"))
+		c.JSON(http.StatusForbidden, gin.H{
+			"message": "用户信息获取失败，权限不足",
+		})
+		return
+	}
+
+	res, err := user.List()
+	if err != nil {
+		util.Error(fmt.Sprintf("用户信息获取失败: %s", err.Error()))
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": fmt.Sprintf("用户信息获取失败: %s", err.Error()),
+		})
+	} else {
+		util.Info(fmt.Sprintf("用户信息获取成功"))
 		c.JSON(http.StatusOK, res)
 	}
 }

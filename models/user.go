@@ -51,7 +51,7 @@ func (user *User) BeforeSave() (err error) {
 func NewDefaultUser() User {
 	return User{
 		Email:        "",
-		GroupID:      NewUserDefaultGroup,
+		GroupID:      GetNewUserDefaultGroup(),
 		Avatar:       DefaultAvatar,
 		ReceiveEmail: true,
 	}
@@ -76,4 +76,10 @@ func (user *User) SetPassword(password string) error {
 
 func DeleteUserByID(ID uint) int64 {
 	return DB.Delete(User{}, ID).RowsAffected
+}
+
+func GetAllUsers() ([]User, error) {
+	var users []User
+	err := DB.Preload("Group").Find(&users).Error
+	return users, err
 }
