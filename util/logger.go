@@ -26,15 +26,15 @@ func Println(prefix, msg string) {
 }
 
 func Info(format string, v ...any) {
-	Println("Info", fmt.Sprintf(format, v...))
+	go Println("Info", fmt.Sprintf(format, v...))
 }
 
 func Error(format string, v ...any) {
-	Println("Error", fmt.Sprintf(format, v...))
+	go Println("Error", fmt.Sprintf(format, v...))
 }
 
 func Warning(format string, v ...any) {
-	Println("Warning", fmt.Sprintf(format, v...))
+	go Println("Warning", fmt.Sprintf(format, v...))
 }
 
 func Panic(format string, v ...any) {
