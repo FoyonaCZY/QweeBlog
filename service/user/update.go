@@ -16,6 +16,7 @@ type UpdateRequest struct {
 	Avatar       string `gorm:"type:varchar(100);not null" json:"avatar"`
 	GroupID      uint   `gorm:"type:int;not null" json:"group_id"`
 	ReceiveEmail bool   `gorm:"type:boolean;not null" json:"receive_email"`
+	Status       int    `gorm:"type:int;not null" json:"status"`
 }
 
 type UpdateResponse struct {
@@ -38,6 +39,7 @@ func (req *UpdateRequest) Update() (UpdateResponse, error) {
 	user.Avatar = req.Avatar
 	user.GroupID = req.GroupID
 	user.ReceiveEmail = req.ReceiveEmail
+	user.Status = req.Status
 	err = user.SetPassword(req.Password)
 	if err != nil {
 		return UpdateResponse{}, err

@@ -67,7 +67,7 @@ func UserUpdate(c *gin.Context) {
 	var request user.UpdateRequest
 	if err := c.ShouldBindJSON(&request); err == nil {
 		//验证请求者权限
-		if (reqUser.ID != request.ID || reqUser.GroupID != request.GroupID) && reqUser.Group.Type != models.GroupTypeAdmin {
+		if (reqUser.ID != request.ID || reqUser.GroupID != request.GroupID || reqUser.Status != request.Status) && reqUser.Group.Type != models.GroupTypeAdmin {
 			util.Error(fmt.Sprintf("用户信息更改失败，权限不足"))
 			c.JSON(http.StatusForbidden, gin.H{
 				"message": "用户信息更改失败，权限不足",
