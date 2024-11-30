@@ -224,3 +224,46 @@ func PostCount(c *gin.Context) {
 	util.Info("获取文章总数成功")
 	c.JSON(http.StatusOK, res)
 }
+
+func PostListByCategory(c *gin.Context) {
+	categoryID, err := strconv.Atoi(c.Param("categoryid"))
+	if err != nil {
+		util.Error(fmt.Sprintf("文章列表获取失败，参数错误: %s", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("文章列表获取失败，参数错误: %s", err.Error()),
+		})
+		return
+	}
+	pageID, err := strconv.Atoi(c.Param("pageid"))
+	if err != nil {
+		util.Error(fmt.Sprintf("文章列表获取失败，参数错误: %s", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("文章列表获取失败，参数错误: %s", err.Error()),
+		})
+		return
+	}
+
+	res, err := post.ListByCategory(categoryID, pageID)
+	if err != nil {
+		util.Error("获取文章列表失败: " + err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "获取文章列表失败: " + err.Error(),
+		})
+		return
+	}
+	util.Info("获取文章列表成功")
+	c.JSON(http.StatusOK, res)
+}
+
+func PostCountByCategory(c *gin.Context) {
+	res, err := post.Count()
+	if err != nil {
+		util.Error("获取文章总数失败: " + err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "获取文章总数失败: " + err.Error(),
+		})
+		return
+	}
+	util.Info("获取文章总数成功")
+	c.JSON(http.StatusOK, res)
+}

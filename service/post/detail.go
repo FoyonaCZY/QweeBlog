@@ -37,7 +37,8 @@ func (req *DetailRequest) Detail() (DetailResponse, error) {
 			Avatar:    post.User.Avatar,
 			GroupType: post.User.Group.Type,
 		},
-		Tags: tags,
+		CategoryID: post.CategoryID,
+		Tags:       tags,
 	}
 	return DetailResponse{p}, nil
 }

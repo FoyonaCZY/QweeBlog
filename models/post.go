@@ -7,9 +7,10 @@ import (
 // Post 文章模型
 type Post struct {
 	gorm.Model
-	Title   string `gorm:"type:varchar(100);not null;" json:"title"`
-	Content string `gorm:"type:text;not null;" json:"content"`
-	UserID  uint   `gorm:"type:int;not null" json:"user_id"`
+	Title      string `gorm:"type:varchar(100);not null;" json:"title"`
+	Content    string `gorm:"type:text;not null;" json:"content"`
+	UserID     uint   `gorm:"type:int;not null" json:"user_id"`
+	CategoryID uint   `gorm:"type:int;not null" json:"category_id"`
 
 	// 关联模型
 	User User  `gorm:"save_associations:false:false"`
@@ -40,4 +41,11 @@ func GetPosts() ([]Post, error) {
 // DeletePostByID 根据ID删除文章
 func DeletePostByID(ID uint) int64 {
 	return DB.Delete(Post{}, ID).RowsAffected
+}
+
+// GetPostsByCategoryID 根据分类ID获取文章
+func GetPostsByCategoryID(categoryID uint) ([]Post, error) {
+	var posts []Post
+	err := DB.Where("category_id = ?", categoryID).Preload("User").Preload("Tags").Find(&posts).Error
+	return posts, err
 }

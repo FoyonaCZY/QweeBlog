@@ -8,10 +8,11 @@ import (
 )
 
 type CreateRequest struct {
-	Title   string `json:"title" binding:"required"`
-	Content string `json:"content" binding:"required"`
-	UserID  uint   `json:"user_id" binding:"required"`
-	Tags    []uint `json:"tags"`
+	Title      string `json:"title" binding:"required"`
+	Content    string `json:"content" binding:"required"`
+	UserID     uint   `json:"user_id" binding:"required"`
+	CategoryID uint   `json:"category_id" binding:"required"`
+	Tags       []uint `json:"tags"`
 }
 
 type CreateResponse struct {
@@ -25,9 +26,10 @@ func (req *CreateRequest) Create() (CreateResponse, error) {
 	}
 
 	post := models.Post{
-		Title:   req.Title,
-		Content: req.Content,
-		UserID:  req.UserID,
+		Title:      req.Title,
+		Content:    req.Content,
+		UserID:     req.UserID,
+		CategoryID: req.CategoryID,
 	}
 	for _, tagID := range req.Tags {
 		tag, err := models.GetTagByID(tagID)
@@ -65,6 +67,12 @@ func ValidatePostCreateReq(req *CreateRequest) bool {
 		if tag.ID == 0 {
 			return false
 		}
+	}
+
+	//检查分类是否存在
+	_, err := models.GetCategoryByID(req.CategoryID)
+	if err != nil {
+		return false
 	}
 
 	//检查内容长度

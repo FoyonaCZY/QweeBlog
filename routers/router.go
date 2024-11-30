@@ -98,6 +98,15 @@ func InitRouter() *gin.Engine {
 		//获取文章详情
 		posts.GET("/detail/:id", controllers.PostDetail)
 
+		//按分类获取文章列表
+		posts.GET("/listbycategory/:categoryid/:pageid", controllers.PostListByCategory)
+
+		//获取分类文章页数
+		posts.GET("/countbycategory/:categoryid", controllers.PostCountByCategory)
+
+		//按标签获取文章列表
+		//posts.GET("/listbytag/:tagid", controllers.PostListByTag)
+
 		postProtected := posts.Group("")
 		{
 			postProtected.Use(middlewares.JwtAuth())
@@ -111,6 +120,32 @@ func InitRouter() *gin.Engine {
 			//更新文章
 			posts.PUT("/update/:id", controllers.PostUpdate)
 		}
+	}
+
+	/*
+
+		分类相关
+
+	*/
+	categories := r.Group("/categories")
+	{
+		//获取分类列表
+		categories.GET("/list", controllers.CategoryList)
+
+		categoryProtected := categories.Group("")
+		{
+			categoryProtected.Use(middlewares.JwtAuth())
+
+			//创建分类
+			categories.POST("/create", controllers.CategoryCreate)
+
+			//删除分类
+			categories.DELETE("/delete/:id", controllers.CategoryDelete)
+
+			//更新分类
+			categories.PUT("/update/:id", controllers.CategoryUpdate)
+		}
+
 	}
 
 	/*

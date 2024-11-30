@@ -30,7 +30,7 @@ func Init() {
 
 	DB = db
 
-	DB.AutoMigrate(&User{}, &Post{}, &Comment{}, &Group{}, &Tag{})
+	DB.AutoMigrate(&User{}, &Post{}, &Comment{}, &Group{}, &Tag{}, &Category{})
 
 	util.Info("数据库连接成功")
 
@@ -40,6 +40,9 @@ func Init() {
 
 	//创建初始管理员
 	addDefaultUser()
+
+	//创建初始分类
+	addDefaultCategory()
 }
 
 func addDefaultGroup() {
@@ -88,5 +91,20 @@ func addDefaultUser() {
 		}
 
 		util.Info(fmt.Sprintf("创建初始管理员用户成功\n初始邮箱: %s\n初始密码: %s", user.Email, password))
+	}
+}
+
+// 添加初始分类
+func addDefaultCategory() {
+	_, err := GetCategoryByID(1)
+	if gorm.IsRecordNotFoundError(err) {
+		category := Category{}
+		category.Name = "默认分类"
+		err := DB.Create(&category).Error
+		if err != nil {
+			util.Panic("创建初始分类失败")
+		}
+
+		util.Info("创建初始分类成功")
 	}
 }

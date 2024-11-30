@@ -14,10 +14,11 @@ type Tag struct {
 
 type Post struct {
 	gorm.Model
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	User    user.User
-	Tags    []Tag `json:"tags"`
+	Title      string `json:"title"`
+	Content    string `json:"content"`
+	User       user.User
+	CategoryID uint  `json:"category_id"`
+	Tags       []Tag `json:"tags"`
 }
 
 type ListResponse struct {
@@ -56,7 +57,48 @@ func List(pageID int) (ListResponse, error) {
 				Avatar:    post.User.Avatar,
 				GroupType: post.User.Group.Type,
 			},
-			Tags: tags,
+			CategoryID: post.CategoryID,
+			Tags:       tags,
+		})
+	}
+	return ListResponse{
+		Count: len(p),
+		Posts: p,
+	}, nil
+}
+
+func ListByCategory(categoryID, pageID int) (ListResponse, error) {
+	posts, err := models.GetPostsByCategoryID(uint(categoryID))
+	if err != nil {
+		return ListResponse{}, err
+	}
+	var p []Post
+	for i, post := range posts {
+		if i < (pageID-1)*config.Configs.Post.PageSize {
+			continue
+		}
+		if i > pageID*config.Configs.Post.PageSize {
+			break
+		}
+		var tags []Tag
+		for _, tag := range post.Tags {
+			tags = append(tags, Tag{
+				ID:   tag.ID,
+				Name: tag.Name,
+			})
+		}
+		p = append(p, Post{
+			Model:   post.Model,
+			Title:   post.Title,
+			Content: post.Content[:min(config.Configs.Post.SummaryLength, len(post.Content))],
+			User: user.User{
+				ID:        post.User.ID,
+				Nickname:  post.User.Nickname,
+				Avatar:    post.User.Avatar,
+				GroupType: post.User.Group.Type,
+			},
+			CategoryID: post.CategoryID,
+			Tags:       tags,
 		})
 	}
 	return ListResponse{
