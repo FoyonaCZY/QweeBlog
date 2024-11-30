@@ -50,7 +50,16 @@ func PostPublish(c *gin.Context) {
 }
 
 func PostList(c *gin.Context) {
-	res, err := post.List()
+	pageID, err := strconv.Atoi(c.Param("pageid"))
+	if err != nil {
+		util.Error(fmt.Sprintf("文章列表获取失败，参数错误: %s", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("文章列表获取失败，参数错误: %s", err.Error()),
+		})
+		return
+	}
+
+	res, err := post.List(pageID)
 	if err != nil {
 		util.Error("获取文章列表失败: " + err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -201,4 +210,17 @@ func PostUpdate(c *gin.Context) {
 			"message": "更新文章失败: " + err.Error(),
 		})
 	}
+}
+
+func PostCount(c *gin.Context) {
+	res, err := post.Count()
+	if err != nil {
+		util.Error("获取文章总数失败: " + err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "获取文章总数失败: " + err.Error(),
+		})
+		return
+	}
+	util.Info("获取文章总数成功")
+	c.JSON(http.StatusOK, res)
 }

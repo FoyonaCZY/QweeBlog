@@ -2,6 +2,7 @@ package post
 
 import (
 	"github.com/FoyonaCZY/QweeBlog/models"
+	"github.com/FoyonaCZY/QweeBlog/pkg/config"
 	"github.com/FoyonaCZY/QweeBlog/service/user"
 	"github.com/jinzhu/gorm"
 )
@@ -25,13 +26,19 @@ type ListResponse struct {
 }
 
 // List 获取文章列表
-func List() (ListResponse, error) {
+func List(pageID int) (ListResponse, error) {
 	posts, err := models.GetPosts()
 	if err != nil {
 		return ListResponse{}, err
 	}
 	var p []Post
-	for _, post := range posts {
+	for i, post := range posts {
+		if i < (pageID-1)*config.Configs.Post.PageSize {
+			continue
+		}
+		if i > pageID*config.Configs.Post.PageSize {
+			break
+		}
 		var tags []Tag
 		for _, tag := range post.Tags {
 			tags = append(tags, Tag{
@@ -42,7 +49,7 @@ func List() (ListResponse, error) {
 		p = append(p, Post{
 			Model:   post.Model,
 			Title:   post.Title,
-			Content: post.Content,
+			Content: post.Content[:min(config.Configs.Post.SummaryLength, len(post.Content))],
 			User: user.User{
 				ID:        post.User.ID,
 				Nickname:  post.User.Nickname,

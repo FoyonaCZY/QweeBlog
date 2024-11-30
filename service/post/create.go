@@ -3,6 +3,7 @@ package post
 import (
 	"errors"
 	"github.com/FoyonaCZY/QweeBlog/models"
+	"github.com/FoyonaCZY/QweeBlog/pkg/config"
 	"unicode"
 )
 
@@ -64,6 +65,11 @@ func ValidatePostCreateReq(req *CreateRequest) bool {
 		if tag.ID == 0 {
 			return false
 		}
+	}
+
+	//检查内容长度
+	if len(req.Content) < 2 || len(req.Content) > config.Configs.Post.ContentMaxLength {
+		return false
 	}
 
 	return true

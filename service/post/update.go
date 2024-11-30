@@ -1,6 +1,9 @@
 package post
 
-import "github.com/FoyonaCZY/QweeBlog/models"
+import (
+	"errors"
+	"github.com/FoyonaCZY/QweeBlog/models"
+)
 
 type UpdateRequest struct {
 	ID      uint
@@ -15,6 +18,18 @@ type UpdateResponse struct {
 
 // Update 更新文章
 func (req *UpdateRequest) Update() (UpdateResponse, error) {
+	//检查内容合法性
+	r := &CreateRequest{
+		Title:   req.Title,
+		Content: req.Content,
+	}
+	for _, tag := range req.Tags {
+		r.Tags = append(r.Tags, tag.ID)
+	}
+	if !ValidatePostCreateReq(r) {
+		return UpdateResponse{}, errors.New("参数不合法")
+	}
+
 	//找到文章
 	post, err := models.GetPostByID(req.ID)
 	if err != nil {

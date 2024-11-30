@@ -53,6 +53,13 @@ type Config struct {
 
 	//默认头像
 	DefaultAvatar string `ini:"default"`
+
+	//文章配置
+	Post struct {
+		SummaryLength    int `ini:"summarylen"`
+		ContentMaxLength int `ini:"maxlen"`
+		PageSize         int `ini:"pagesize"`
+	}
 }
 
 var Configs *Config
@@ -104,6 +111,9 @@ func Init() {
 
 	// 读取DefaultAvatar配置
 	Configs.DefaultAvatar = cfg.Section("avatar").Key("default").String()
+
+	// 读取Post配置
+	err = cfg.Section("post").MapTo(&Configs.Post)
 }
 
 // UpdateConfig 更新配置文件
@@ -117,27 +127,38 @@ func UpdateConfig() {
 	if err != nil {
 		util.Panic("修改配置文件失败: " + err.Error())
 	}
+
 	err = cfg.Section("server").ReflectFrom(&Configs.Server)
 	if err != nil {
 		util.Panic("修改配置文件失败: " + err.Error())
 	}
+
 	err = cfg.Section("mysql").ReflectFrom(&Configs.MySQL)
 	if err != nil {
 		util.Panic("修改配置文件失败: " + err.Error())
 	}
+
 	err = cfg.Section("jwt").ReflectFrom(&Configs.Jwt)
 	if err != nil {
 		util.Panic("修改配置文件失败: " + err.Error())
 	}
+
 	err = cfg.Section("smtp").ReflectFrom(&Configs.Smtp)
 	if err != nil {
 		util.Panic("修改配置文件失败: " + err.Error())
 	}
+
 	err = cfg.Section("defaultgroup").ReflectFrom(&Configs.DefaultGroup)
 	if err != nil {
 		util.Panic("修改配置文件失败: " + err.Error())
 	}
+
 	cfg.Section("avatar").Key("default").SetValue(Configs.DefaultAvatar)
+
+	err = cfg.Section("post").ReflectFrom(&Configs.Post)
+	if err != nil {
+		util.Panic("修改配置文件失败: " + err.Error())
+	}
 
 	err = cfg.SaveTo("pkg/config/config.ini")
 	if err != nil {

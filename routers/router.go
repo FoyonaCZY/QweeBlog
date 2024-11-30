@@ -89,9 +89,11 @@ func InitRouter() *gin.Engine {
 	*/
 	posts := r.Group("/posts")
 	{
+		//获取文章页数
+		posts.GET("/count", controllers.PostCount)
 
 		//获取文章列表
-		posts.GET("/list", controllers.PostList)
+		posts.GET("/list/:pageid", controllers.PostList)
 
 		//获取文章详情
 		posts.GET("/detail/:id", controllers.PostDetail)
