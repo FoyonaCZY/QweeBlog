@@ -14,7 +14,9 @@ type Config struct {
 
 	// 服务器配置
 	Server struct {
-		Port int `ini:"port"`
+		Port     int `ini:"port"`
+		MaxConns int `ini:"maxconns"`
+		TimeOut  int `ini:"timeout"`
 	}
 
 	//MySQL配置
