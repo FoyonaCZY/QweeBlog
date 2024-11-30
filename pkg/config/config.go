@@ -43,7 +43,7 @@ type Config struct {
 		User     string `ini:"user"`
 		Password string `ini:"password"`
 		Nickname string `ini:"nickname"`
-		Enable   bool   `ini:"enable"`
+		Enable   int    `ini:"enable"`
 	}
 
 	//新用户默认组

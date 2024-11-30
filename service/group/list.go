@@ -5,6 +5,7 @@ import (
 )
 
 type ListResponse struct {
+	Count  int            `json:"count"`
 	Groups []models.Group `json:"groups"`
 }
 
@@ -14,5 +15,6 @@ func List() (ListResponse, error) {
 	if err != nil {
 		return ListResponse{}, err
 	}
-	return ListResponse{Groups: groups}, nil
+	return ListResponse{Count: len(groups),
+		Groups: groups}, nil
 }

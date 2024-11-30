@@ -28,11 +28,11 @@ func InitRouter() *gin.Engine {
 		{
 			userProtected.Use(middlewares.JwtAuth())
 
-			//获取用户列表
-			user.GET("/list", controllers.UserList)
-
 			//获取用户信息
 			user.GET("/info/:id", controllers.UserInfo)
+
+			//获取用户列表
+			user.GET("/list", controllers.UserList)
 
 			//更新用户信息
 			user.PUT("/update", controllers.UserUpdate)
@@ -79,7 +79,7 @@ func InitRouter() *gin.Engine {
 		config.Use(middlewares.JwtAuth())
 
 		//修改配置
-		config.PUT("/update", controllers.ConfigUpdate)
+		config.POST("/update", controllers.ConfigUpdate)
 	}
 
 	/*

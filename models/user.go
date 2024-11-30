@@ -62,7 +62,7 @@ func NewDefaultUser() User {
 		Status:          UserStatusNotActive,
 		ActivationToken: "nil",
 	}
-	if !config.Configs.Smtp.Enable {
+	if config.Configs.Smtp.Enable == 0 {
 		user.Status = UserStatusActive
 	}
 	return user

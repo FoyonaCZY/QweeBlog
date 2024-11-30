@@ -58,7 +58,7 @@ func UserUpdate(c *gin.Context) {
 	reqUser, err := auth.CurrentUser(c)
 	if err != nil {
 		util.Error(fmt.Sprintf("用户信息更改失败: %s", err.Error()))
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": fmt.Sprintf("用户信息更改失败: %s", err.Error()),
 		})
 		return
@@ -102,6 +102,9 @@ func UserUpdate(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
+	//验证请求者权限
+	reqUser, _ := auth.CurrentUser(c)
+
 	id := c.Param("id")
 	if id == "" {
 		util.Error("用户信息获取失败，参数错误")
@@ -120,7 +123,14 @@ func UserInfo(c *gin.Context) {
 		return
 	}
 	request.ID = uint(atoi)
-	res, err := request.Info()
+
+	var res any
+	if reqUser.Group.Type != models.GroupTypeAdmin {
+		res, err = request.Info()
+	} else {
+		res, err = request.InfoAdmin()
+	}
+
 	if err != nil {
 		util.Error(fmt.Sprintf("用户信息获取失败: %s", err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -137,7 +147,7 @@ func UserDelete(c *gin.Context) {
 	reqUser, err := auth.CurrentUser(c)
 	if err != nil {
 		util.Error(fmt.Sprintf("用户信息删除失败: %s", err.Error()))
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": fmt.Sprintf("用户信息删除失败: %s", err.Error()),
 		})
 		return
@@ -180,23 +190,14 @@ func UserDelete(c *gin.Context) {
 
 func UserList(c *gin.Context) {
 	//验证请求者权限
-	reqUser, err := auth.CurrentUser(c)
-	if err != nil {
-		util.Error(fmt.Sprintf("用户信息获取失败: %s", err.Error()))
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("用户信息获取失败: %s", err.Error()),
-		})
-		return
-	}
+	reqUser, _ := auth.CurrentUser(c)
+	var res any
+	var err error
 	if reqUser.Group.Type != models.GroupTypeAdmin {
-		util.Error(fmt.Sprintf("用户信息获取失败，权限不足"))
-		c.JSON(http.StatusForbidden, gin.H{
-			"message": "用户信息获取失败，权限不足",
-		})
-		return
+		res, err = user.List()
+	} else {
+		res, err = user.ListAdmin()
 	}
-
-	res, err := user.List()
 	if err != nil {
 		util.Error(fmt.Sprintf("用户信息获取失败: %s", err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{

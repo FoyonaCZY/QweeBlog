@@ -30,7 +30,7 @@ func Init() {
 
 	DB = db
 
-	DB.AutoMigrate(&User{}, &Post{}, &Comment{}, &Group{})
+	DB.AutoMigrate(&User{}, &Post{}, &Comment{}, &Group{}, &Tag{})
 
 	util.Info("数据库连接成功")
 
