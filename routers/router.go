@@ -118,24 +118,29 @@ func InitRouter() *gin.Engine {
 		评论相关
 
 	*/
-	//comments := v1.Group("/comments")
-	//{
-	//	//发布评论
-	//	comments.POST("/publish",middlewares.JwtAuthMiddleware(), controllers.CommentPublish)
-	//
-	//	//获取评论列表
-	//	comments.GET("/listall", controllers.CommentListall)
-	//
-	//	//获取文章评论列表
-	//	comments.GET("/list/:post_id", controllers.CommentList)
-	//
-	//	//删除评论
-	//	comments.DELETE("/delete/:id", middlewares.JwtAuthMiddleware(),controllers.CommentDelete)
-	//
-	//	//更新评论
-	//	//comments.PUT("/update/:id", middlewares.JwtAuthMiddleware(),controllers.CommentUpdate)
-	//}
-	//
+	comments := r.Group("/comments")
+	{
+
+		//获取评论列表
+		comments.GET("/listall", controllers.CommentListAll)
+
+		//获取文章评论列表
+		comments.GET("/list/:postid", controllers.CommentList)
+
+		commentsProtected := comments.Group("")
+		{
+			commentsProtected.Use(middlewares.JwtAuth())
+
+			//删除评论
+			comments.DELETE("/delete/:id", controllers.CommentDelete)
+
+			//发布评论
+			comments.POST("/create", controllers.CommentCreate)
+		}
+		//更新评论
+		//comments.PUT("/update/:id", middlewares.JwtAuthMiddleware(),controllers.CommentUpdate)
+	}
+
 	///*
 	//
 	//	标签相关
