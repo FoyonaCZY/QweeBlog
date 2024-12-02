@@ -11,6 +11,9 @@ func InitRouter() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 
+	//处理CORS
+	r.Use(middlewares.Cors())
+
 	//注册全局限流中间件
 	r.Use(middlewares.MaxAllowed())
 
