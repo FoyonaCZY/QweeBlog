@@ -3,6 +3,7 @@ import { Box, Typography, CircularProgress } from "@mui/material";
 import GetPostDetail from "../../data/postdetail";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 export default function OnePostDetail(ID) {
 
@@ -169,12 +170,30 @@ export default function OnePostDetail(ID) {
                 <ReactMarkdown
                     children={post.content}
                     remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
                     components={{
                         // 自定义Markdown元素的渲染方式
-                        h1: ({ node, ...props }) => <Typography variant="h4" gutterBottom sx={{lineHeight:1.8,}} {...props} />,
-                        h2: ({ node, ...props }) => <Typography variant="h5" gutterBottom sx={{lineHeight:1.8,}} {...props} />,
-                        p: ({ node, ...props }) => <Typography variant="body1" color="text.secondary" sx={{lineHeight:1.8,}} {...props} />,
-                        a: ({ node, ...props }) => <Typography variant="body1" color="text.secondary" sx={{lineHeight:1.8,}} {...props} />,
+                        h1: ({ node, ...props }) => <Typography variant="h4" gutterBottom sx={{ lineHeight: 1.8, }} {...props} />,
+                        h2: ({ node, ...props }) => <Typography variant="h5" gutterBottom sx={{ lineHeight: 1.8, }} {...props} />,
+                        p: ({ node, ...props }) => (
+                            // 仅包装段落内容，保持链接元素不受影响
+                            <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }} {...props} />
+                        ),
+                        a: ({ node, ...props }) => (
+                            <a
+                                {...props}
+                                style={{
+                                    color: '#1976d2',  // 可以设置颜色
+                                    textDecoration: 'none',
+                                }}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {/* 这里为链接提供可访问的文本 */}
+                                {props.children || 'Click here'}  {/* 如果没有其他文本内容，提供默认文本 */}
+                            </a>
+                        ),
+                        img: ({ node, ...props }) => <img {...props} style={{ maxWidth: '100%', height: 'auto' }} alt="" />,
                         // 可以继续为其他Markdown元素添加自定义样式
                     }}
                 />

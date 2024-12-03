@@ -105,6 +105,9 @@ export default function PostDetail(ID, title, content, avatar, author, authorava
                             fontSize: '1.0rem',
                             color: 'white',
                             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',  // 设置阴影
+                            '&:hover': {
+                                cursor: 'default',
+                            },
                         }
                     }>
                         {date}
@@ -139,6 +142,9 @@ export default function PostDetail(ID, title, content, avatar, author, authorava
                         overflow: 'hidden',               // 隐藏超出的文本
                         WebkitBoxOrient: 'vertical',      // 设置为垂直排列
                         WebkitLineClamp: 4,               // 限制显示三行，超出部分显示省略号
+                        '&:hover': {
+                            cursor: 'default',
+                        },
                     }
                 }>
                     {content}

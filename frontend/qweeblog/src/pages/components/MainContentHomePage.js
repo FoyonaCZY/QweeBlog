@@ -81,7 +81,7 @@ export default function MainContentHomePage() {
 
     // 渲染组件
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4}}>
 
             {/* 网站标题和描述 */}
             <div>
@@ -95,6 +95,9 @@ export default function MainContentHomePage() {
                         alignItems: 'center',
                         display: 'flex',
                         justifyContent: 'center',
+                        '&:hover': {
+                            cursor: 'default',
+                        }
                     }
                 }>
                     {config.siteTitle}

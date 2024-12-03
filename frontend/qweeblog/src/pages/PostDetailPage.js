@@ -7,8 +7,7 @@ import OnePostDetail from './components/onePostDetail';
 
 export default function PostDetailPage() {
 
-    const {id} = useParams();
-    console.log(id);
+    const { id } = useParams();
 
     return (
         <>
@@ -56,13 +55,16 @@ export default function PostDetailPage() {
                                     alignItems: 'center',
                                     display: 'flex',
                                     justifyContent: 'center',
+                                    '&:hover': {
+                                        cursor: 'default',
+                                    },
                                 }
                             }>
                                 {config.siteTitle}
                             </Typography>
                         </div>
-                        
-                        <OnePostDetail ID={id}/>
+
+                        <OnePostDetail ID={id} />
                     </Box>
                 </Container>
             </Box>
