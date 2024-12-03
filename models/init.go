@@ -96,8 +96,8 @@ func addDefaultUser() {
 
 // 添加初始分类
 func addDefaultCategory() {
-	_, err := GetCategoryByID(1)
-	if gorm.IsRecordNotFoundError(err) {
+	categories, _ := GetCategories()
+	if len(categories) == 0 {
 		category := Category{}
 		category.Name = "默认分类"
 		err := DB.Create(&category).Error

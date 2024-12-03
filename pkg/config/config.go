@@ -54,7 +54,10 @@ type Config struct {
 	}
 
 	//默认头像
-	DefaultAvatar string `ini:"default"`
+	DefaultAvatar struct {
+		DefaultAvatar     string `ini:"default"`
+		DefaultPostAvatar string `ini:"defaultpost"`
+	}
 
 	//文章配置
 	Post struct {
@@ -112,7 +115,10 @@ func Init() {
 	}
 
 	// 读取DefaultAvatar配置
-	Configs.DefaultAvatar = cfg.Section("avatar").Key("default").String()
+	err = cfg.Section("avatar").MapTo(&Configs.DefaultAvatar)
+	if err != nil {
+		util.Panic("解析配置文件失败: " + err.Error())
+	}
 
 	// 读取Post配置
 	err = cfg.Section("post").MapTo(&Configs.Post)
@@ -155,7 +161,10 @@ func UpdateConfig() {
 		util.Panic("修改配置文件失败: " + err.Error())
 	}
 
-	cfg.Section("avatar").Key("default").SetValue(Configs.DefaultAvatar)
+	err = cfg.Section("avatar").ReflectFrom(&Configs.DefaultAvatar)
+	if err != nil {
+		util.Panic("修改配置文件失败: " + err.Error())
+	}
 
 	err = cfg.Section("post").ReflectFrom(&Configs.Post)
 	if err != nil {

@@ -11,6 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import { useNavigate } from 'react-router-dom';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     display: 'flex',
@@ -18,32 +19,19 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     justifyContent: 'space-between',
     flexShrink: 0,
     borderRadius: `18px`,
-    backdropFilter: 'blur(24px)',
+    backdropFilter: 'blur(40px)',
     border: '1px solid',
     borderColor: (theme.vars || theme).palette.divider,
-    backgroundColor: theme.vars
-        ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.4)`
-        : alpha(theme.palette.background.default, 0.4),
+    backgroundColor: alpha(theme.palette.background.default, 0.05),
     boxShadow: (theme.vars || theme).shadows[5],
     padding: '10px 20px',
-}));
-
-const StyledTextButtonHomePage = styled(Button)(({ theme }) => ({
-    fontFamily: 'Microsoft YaHei', // 设置字体
-    fontWeight: 'bold',               // 设置字体加粗
-    fontSize: '0.8rem',               // 设置字体大小
-    color: '#333333',                    // 设置字体颜色
-    textTransform: 'none',            // 防止自动转换为大写
-    ':hover': {
-        color: 'gray',
-    },
 }));
 
 const StyledTextButton = styled(Button)(({ theme }) => ({
     fontFamily: 'Microsoft YaHei', // 设置字体
     fontWeight: 'bold',               // 设置字体加粗
     fontSize: '0.8rem',               // 设置字体大小
-    color: 'gray',                    // 设置字体颜色
+    color: 'white',                    // 设置字体颜色
     textTransform: 'none',            // 防止自动转换为大写
     ':hover': {
         color: 'darkgray',
@@ -58,12 +46,23 @@ const StyledTextButtonSignIn = styled(Button)(({ theme }) => ({
     textTransform: 'none',            // 防止自动转换为大写
     borderRadius: '10px',
     backgroundColor: '#333333',
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',  // 设置阴影
     ':hover': {
         color: 'darkgray',
     },
 }));
 
 export default function AppAppBar() {
+    const navigate = useNavigate();
+
+    const goToHome = () => {
+        navigate('/');
+    };
+
+    const goToCommentBoard = () => {
+        navigate('/留言板');
+    };
+
     const [open, setOpen] = React.useState(false);
 
     const toggleDrawer = (newOpen) => () => {
@@ -85,10 +84,10 @@ export default function AppAppBar() {
                 <StyledToolbar variant="dense" disableGutters>
                     <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                            <StyledTextButtonHomePage variant="text" size="small">
+                            <StyledTextButton variant="text" size="small" onClick={goToHome}>
                                 首页
-                            </StyledTextButtonHomePage>
-                            <StyledTextButton variant="text" size="small">
+                            </StyledTextButton>
+                            <StyledTextButton variant="text" size="small" onClick={goToCommentBoard}>
                                 留言板
                             </StyledTextButton>
                             <StyledTextButton variant="text" size="small">
@@ -138,8 +137,8 @@ export default function AppAppBar() {
                                         <CloseRoundedIcon />
                                     </IconButton>
                                 </Box>
-                                <MenuItem>首页</MenuItem>
-                                <MenuItem>留言板</MenuItem>
+                                <MenuItem onClick={goToHome}>首页</MenuItem>
+                                <MenuItem onClick={goToCommentBoard}>留言板</MenuItem>
                                 <MenuItem>归档</MenuItem>
                                 <MenuItem>朋友们</MenuItem>
                                 <Divider sx={{ my: 3 }} />

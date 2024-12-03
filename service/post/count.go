@@ -16,6 +16,9 @@ func Count() (CountResponse, error) {
 	if len(posts)%config.Configs.Post.PageSize != 0 {
 		count++
 	}
+	if count == 0 {
+		count = 1
+	}
 	if err != nil {
 		return CountResponse{}, err
 	}
@@ -27,6 +30,9 @@ func CountByCategory(categoryID int) (CountResponse, error) {
 	count := len(posts) / config.Configs.Post.PageSize
 	if len(posts)%config.Configs.Post.PageSize != 0 {
 		count++
+	}
+	if count == 0 {
+		count = 1
 	}
 	if err != nil {
 		return CountResponse{}, err

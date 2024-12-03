@@ -57,7 +57,7 @@ func NewDefaultUser() User {
 	user := User{
 		Email:           "",
 		GroupID:         config.Configs.DefaultGroup.ID,
-		Avatar:          config.Configs.DefaultAvatar,
+		Avatar:          config.Configs.DefaultAvatar.DefaultAvatar,
 		ReceiveEmail:    true,
 		Status:          UserStatusNotActive,
 		ActivationToken: "nil",

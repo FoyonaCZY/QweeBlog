@@ -158,9 +158,9 @@ func PostUpdate(c *gin.Context) {
 	//验证请求者权限
 	reqUser, err := auth.CurrentUser(c)
 	if err != nil {
-		util.Error("删除文章失败: " + err.Error())
+		util.Error("更新文章失败: " + err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "删除文章失败: " + err.Error(),
+			"message": "更新文章失败: " + err.Error(),
 		})
 		return
 	}
@@ -184,9 +184,9 @@ func PostUpdate(c *gin.Context) {
 	updateID := uint(atoi)
 
 	if reqUser.Group.Type != models.GroupTypeAdmin && (reqUser.Group.Type != models.GroupTypeEditor || reqUser.ID != updateID) {
-		util.Error("删除文章失败: 权限不足")
+		util.Error("更新文章失败: 权限不足")
 		c.JSON(http.StatusForbidden, gin.H{
-			"message": "删除文章失败: 权限不足",
+			"message": "更新文章失败: 权限不足",
 		})
 		return
 	}
@@ -256,7 +256,16 @@ func PostListByCategory(c *gin.Context) {
 }
 
 func PostCountByCategory(c *gin.Context) {
-	res, err := post.Count()
+	atoi, err := strconv.Atoi(c.Param("categoryid"))
+	if err != nil {
+		util.Error("获取文章总数失败: " + err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "获取文章总数失败: " + err.Error(),
+		})
+		return
+	}
+
+	res, err := post.CountByCategory(atoi)
 	if err != nil {
 		util.Error("获取文章总数失败: " + err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{

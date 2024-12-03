@@ -31,6 +31,7 @@ func (req *DetailRequest) Detail() (DetailResponse, error) {
 		Model:   post.Model,
 		Title:   post.Title,
 		Content: post.Content,
+		Avatar:  post.Avatar,
 		User: user.User{
 			ID:        post.User.ID,
 			Nickname:  post.User.Nickname,

@@ -25,12 +25,12 @@ func (req *CreateRequest) Create() (CreateResponse, error) {
 		return CreateResponse{}, errors.New("参数不合法")
 	}
 
-	post := models.Post{
-		Title:      req.Title,
-		Content:    req.Content,
-		UserID:     req.UserID,
-		CategoryID: req.CategoryID,
-	}
+	post := models.NewPost()
+	post.Title = req.Title
+	post.Content = req.Content
+	post.UserID = req.UserID
+	post.CategoryID = req.CategoryID
+
 	for _, tagID := range req.Tags {
 		tag, err := models.GetTagByID(tagID)
 		if err != nil {

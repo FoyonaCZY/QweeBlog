@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/FoyonaCZY/QweeBlog/pkg/config"
 	"github.com/jinzhu/gorm"
 )
 
@@ -11,6 +12,7 @@ type Post struct {
 	Content    string `gorm:"type:text;not null;" json:"content"`
 	UserID     uint   `gorm:"type:int;not null" json:"user_id"`
 	CategoryID uint   `gorm:"type:int;not null" json:"category_id"`
+	Avatar     string `gorm:"type:varchar(255);not null" json:"avatar"`
 
 	// 关联模型
 	User User  `gorm:"save_associations:false:false"`
@@ -48,4 +50,11 @@ func GetPostsByCategoryID(categoryID uint) ([]Post, error) {
 	var posts []Post
 	err := DB.Where("category_id = ?", categoryID).Preload("User").Preload("Tags").Find(&posts).Error
 	return posts, err
+}
+
+// NewPost 新建文章
+func NewPost() Post {
+	return Post{
+		Avatar: config.Configs.DefaultAvatar.DefaultPostAvatar,
+	}
 }

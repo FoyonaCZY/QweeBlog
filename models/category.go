@@ -12,10 +12,8 @@ type Category struct {
 // GetCategoryByID 根据ID获取分类
 func GetCategoryByID(id uint) (Category, error) {
 	var category Category
-	if err := DB.First(&category, id).Error; err != nil {
-		return Category{}, err
-	}
-	return category, nil
+	err := DB.Where("id = ?", id).First(&category).Error
+	return category, err
 }
 
 // GetCategories 获取分类列表

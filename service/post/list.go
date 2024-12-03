@@ -17,8 +17,9 @@ type Post struct {
 	Title      string `json:"title"`
 	Content    string `json:"content"`
 	User       user.User
-	CategoryID uint  `json:"category_id"`
-	Tags       []Tag `json:"tags"`
+	CategoryID uint   `json:"category_id"`
+	Tags       []Tag  `json:"tags"`
+	Avatar     string `json:"avatar"`
 }
 
 type ListResponse struct {
@@ -37,7 +38,7 @@ func List(pageID int) (ListResponse, error) {
 		if i < (pageID-1)*config.Configs.Post.PageSize {
 			continue
 		}
-		if i > pageID*config.Configs.Post.PageSize {
+		if i >= pageID*config.Configs.Post.PageSize {
 			break
 		}
 		var tags []Tag
@@ -51,6 +52,7 @@ func List(pageID int) (ListResponse, error) {
 			Model:   post.Model,
 			Title:   post.Title,
 			Content: post.Content[:min(config.Configs.Post.SummaryLength, len(post.Content))],
+			Avatar:  post.Avatar,
 			User: user.User{
 				ID:        post.User.ID,
 				Nickname:  post.User.Nickname,
@@ -77,7 +79,7 @@ func ListByCategory(categoryID, pageID int) (ListResponse, error) {
 		if i < (pageID-1)*config.Configs.Post.PageSize {
 			continue
 		}
-		if i > pageID*config.Configs.Post.PageSize {
+		if i >= pageID*config.Configs.Post.PageSize {
 			break
 		}
 		var tags []Tag
@@ -91,6 +93,7 @@ func ListByCategory(categoryID, pageID int) (ListResponse, error) {
 			Model:   post.Model,
 			Title:   post.Title,
 			Content: post.Content[:min(config.Configs.Post.SummaryLength, len(post.Content))],
+			Avatar:  post.Avatar,
 			User: user.User{
 				ID:        post.User.ID,
 				Nickname:  post.User.Nickname,

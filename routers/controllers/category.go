@@ -67,6 +67,17 @@ func CategoryUpdate(c *gin.Context) {
 	}
 
 	var request category.UpdateRequest
+
+	atoi, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		util.Error("更新分类失败: " + err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "更新分类失败: " + err.Error(),
+		})
+		return
+	}
+
+	request.ID = uint(atoi)
 	if err := c.ShouldBindJSON(&request); err == nil {
 		response, err := request.Update()
 		if err != nil {

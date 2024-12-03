@@ -6,10 +6,12 @@ import (
 )
 
 type UpdateRequest struct {
-	ID      uint
-	Title   string `json:"title" binding:"required"`
-	Content string `json:"content" binding:"required"`
-	Tags    []Tag  `json:"tags"`
+	ID         uint
+	Title      string `json:"title" binding:"required"`
+	Content    string `json:"content" binding:"required"`
+	CategoryID uint   `json:"category_id" binding:"required"`
+	Avatar     string `json:"avatar"`
+	Tags       []Tag  `json:"tags"`
 }
 
 type UpdateResponse struct {
@@ -20,8 +22,9 @@ type UpdateResponse struct {
 func (req *UpdateRequest) Update() (UpdateResponse, error) {
 	//检查内容合法性
 	r := &CreateRequest{
-		Title:   req.Title,
-		Content: req.Content,
+		Title:      req.Title,
+		Content:    req.Content,
+		CategoryID: req.CategoryID,
 	}
 	for _, tag := range req.Tags {
 		r.Tags = append(r.Tags, tag.ID)
@@ -39,6 +42,8 @@ func (req *UpdateRequest) Update() (UpdateResponse, error) {
 	//更新文章
 	post.Title = req.Title
 	post.Content = req.Content
+	post.Avatar = req.Avatar
+	post.CategoryID = req.CategoryID
 	for _, tag := range req.Tags {
 		t, err := models.GetTagByID(tag.ID)
 		if err != nil {
