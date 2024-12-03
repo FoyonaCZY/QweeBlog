@@ -48,10 +48,15 @@ func List(pageID int) (ListResponse, error) {
 				Name: tag.Name,
 			})
 		}
+		runes := []rune(post.Content)
+		if len(runes) > config.Configs.Post.SummaryLength {
+			runes = runes[:config.Configs.Post.SummaryLength]
+		}
+
 		p = append(p, Post{
 			Model:   post.Model,
 			Title:   post.Title,
-			Content: post.Content[:min(config.Configs.Post.SummaryLength, len(post.Content))],
+			Content: string(runes),
 			Avatar:  post.Avatar,
 			User: user.User{
 				ID:        post.User.ID,
@@ -89,10 +94,15 @@ func ListByCategory(categoryID, pageID int) (ListResponse, error) {
 				Name: tag.Name,
 			})
 		}
+		runes := []rune(post.Content)
+		if len(runes) > config.Configs.Post.SummaryLength {
+			runes = runes[:config.Configs.Post.SummaryLength]
+		}
+
 		p = append(p, Post{
 			Model:   post.Model,
 			Title:   post.Title,
-			Content: post.Content[:min(config.Configs.Post.SummaryLength, len(post.Content))],
+			Content: string(runes),
 			Avatar:  post.Avatar,
 			User: user.User{
 				ID:        post.User.ID,

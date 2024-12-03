@@ -1,10 +1,60 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
-import config from "../../data/siteconfig";
+import { Box, Typography, CircularProgress } from "@mui/material";
+import GetPostDetail from "../../data/postdetail";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-export default function PostDetail(ID, title, content, avatar, author, authoravatar, category, created_at, updated_at) {
+export default function OnePostDetail(ID) {
 
-    const isoDate = new Date(created_at);
+    const [loading, setLoading] = React.useState(true);      // 加载状态
+    const [error, setError] = React.useState(null);          // 错误状态
+    const [post, setPost] = React.useState([]);              // 文章数据
+
+    // 获取文章数据
+    React.useEffect(() => {
+        const fetchPost = async () => {
+            try {
+                const data = await GetPostDetail(ID); // 异步获取数据
+                setPost(data);  // 设置文章数据
+            } catch (err) {
+                setError('Failed to load post');
+            } finally {
+                setLoading(false);  // 结束加载状态
+            }
+        };
+
+        fetchPost();  // 调用获取数据的函数
+    }, [ID]);  // 依赖数组，表示只在 ID 变化时调用
+
+    if (loading) {
+        return (
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '500px',
+            }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '500px',
+            }}>
+                <Typography variant="h4" color="error">
+                    {error}
+                </Typography>
+            </Box>
+        );
+    }
+
+    const isoDate = new Date(post.CreatedAt);
 
     const date = isoDate.toLocaleString('zh-CN', {
         weekday: 'long',    // 星期几（例如：星期二）
@@ -21,19 +71,21 @@ export default function PostDetail(ID, title, content, avatar, author, authorava
         <Box key={ID}
             sx={{
                 borderRadius: '8px',
-                height: '500px',
+                height: '100%',
                 boxShadow: 3,
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
                 backgroundColor: 'background.paper',
+                alignItems: 'center',
             }}
         >
             <Box
                 sx={{
-                    height: '60%',
+                    height: '350px',
+                    width: '100%',
                     flexDirection: 'column',
-                    backgroundImage: `url(${avatar})`,
+                    backgroundImage: `url(${post.avatar})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     alignItems: 'center',
@@ -41,22 +93,15 @@ export default function PostDetail(ID, title, content, avatar, author, authorava
                     justifyContent: 'center',
                 }}
             >
-                <Typography variant="h5" component='a' href={`${config.siteDomain}post/${ID}`} gutterBottom sx={
+                <Typography variant="h5" gutterBottom sx={
                     {
-                        maxWidth: '90%',
                         fontFamily: 'Microsoft YaHei',
                         fontSize: '2.0rem',
                         color: 'white',
                         textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',  // 设置阴影
-                        textDecoration: 'none',
-                        textAlign: 'center',
-                        '&:hover': {
-                            color: 'lightgray',
-                            cursor: 'pointer',
-                        }
                     }
                 }>
-                    {title}
+                    {post.title}
                 </Typography>
 
                 <Box sx={
@@ -69,7 +114,7 @@ export default function PostDetail(ID, title, content, avatar, author, authorava
                         justifyContent: 'center',
                     }
                 }>
-                    <img src={authoravatar} alt={author} style={{
+                    <img src={post.User.avatar} alt={post.User.nickname} style={{
                         width: '30px',
                         height: '30px',
                         borderRadius: '50%',
@@ -87,7 +132,7 @@ export default function PostDetail(ID, title, content, avatar, author, authorava
                             }
                         }
                     }>
-                        {author}
+                        {post.User.nickname}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={
                         {
@@ -112,38 +157,29 @@ export default function PostDetail(ID, title, content, avatar, author, authorava
                 </Box>
             </Box>
 
-            <Box
-                sx={{
-                    height: '40%',
-                    padding: 2,
-                    boxShadow: '0 -50px 100px rgba(0, 0, 0, 0.5)', // 水平偏移 0，垂直偏移 -4px，模糊半径
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Typography variant="body2" color="text.secondary" sx={
-                    {
-                        height: '60%',
-                        maxHeight: '60%',                    // 高度限制
-                        width: '95%',
-                        maxWidth: '95%',                    // 宽度限制
-                        display: '-webkit-box',           // 启用多行截断
-                        gap: 1,
-                        alignItems: 'center',
-                        fontFamily: 'Microsoft YaHei',
-                        fontSize: '0.9rem',
-                        lineHeight: 1.8,
-                        marginTop: 2,
-                        whiteSpace: 'normal',             // 允许换行
-                        overflow: 'hidden',               // 隐藏超出的文本
-                        WebkitBoxOrient: 'vertical',      // 设置为垂直排列
-                        WebkitLineClamp: 4,               // 限制显示三行，超出部分显示省略号
-                    }
-                }>
-                    {content}
-                </Typography>
+            <Box sx={{
+                height: '100%',
+                width: '95%',
+                display: 'flex',
+                marginTop: 2,
+                flexDirection: 'column',
+                gap: 2,
+                padding: 2,
+            }}>
+                <ReactMarkdown
+                    children={post.content}
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                        // 自定义Markdown元素的渲染方式
+                        h1: ({ node, ...props }) => <Typography variant="h4" gutterBottom sx={{lineHeight:1.8,}} {...props} />,
+                        h2: ({ node, ...props }) => <Typography variant="h5" gutterBottom sx={{lineHeight:1.8,}} {...props} />,
+                        p: ({ node, ...props }) => <Typography variant="body1" color="text.secondary" sx={{lineHeight:1.8,}} {...props} />,
+                        a: ({ node, ...props }) => <Typography variant="body1" color="text.secondary" sx={{lineHeight:1.8,}} {...props} />,
+                        // 可以继续为其他Markdown元素添加自定义样式
+                    }}
+                />
             </Box>
+
         </Box>
     );
 }

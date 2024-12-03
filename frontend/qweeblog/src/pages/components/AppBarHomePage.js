@@ -38,6 +38,17 @@ const StyledTextButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const StyledTextButtonSignUp = styled(Button)(({ theme }) => ({
+    fontFamily: 'Microsoft YaHei', // 设置字体
+    fontWeight: 'bold',               // 设置字体加粗
+    fontSize: '0.8rem',               // 设置字体大小
+    color: 'black',                    // 设置字体颜色
+    textTransform: 'none',            // 防止自动转换为大写
+    ':hover': {
+        color: 'darkgray',
+    },
+}));
+
 const StyledTextButtonSignIn = styled(Button)(({ theme }) => ({
     fontFamily: 'Microsoft YaHei', // 设置字体
     fontWeight: 'bold',               // 设置字体加粗
@@ -143,9 +154,9 @@ export default function AppAppBar() {
                                 <MenuItem>朋友们</MenuItem>
                                 <Divider sx={{ my: 3 }} />
                                 <MenuItem>
-                                    <StyledTextButton variant="text" size="small" fullWidth>
+                                    <StyledTextButtonSignUp variant="text" size="small" fullWidth>
                                         注册
-                                    </StyledTextButton>
+                                    </StyledTextButtonSignUp>
                                 </MenuItem>
                                 <MenuItem>
                                     <StyledTextButtonSignIn variant="outlined" fullWidth>
