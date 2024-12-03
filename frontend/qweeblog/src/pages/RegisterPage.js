@@ -59,46 +59,30 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     },
 }));
 
-// 登录并获取 JWT Token
-const loginUser = async (email, password) => {
+const registerUser = async (email, password,nickname) => {
     try {
-        // 向后端发送 POST 请求进行登录
-        const response = await axios.post(`${config.apiDomain}user/login`, {
+        const response = await axios.post(`${config.apiDomain}user/register`, {
             email,
             password,
+            nickname,
+            "receive_email":true
         });
+        const { id } = response.data;
 
-        const status = response.status;
-        if (status === 500) {
-            const message = response.data.message;
-            if (message === '用户登陆失败：用户未激活，已重新发送激活邮件') {
-                alert('用户未激活，已重新发送激活邮件');
-                throw new Error('用户未激活，已重新发送激活邮件');
-            }
-        }
-
-        // 获取返回的 JWT Token
-        const { token ,user} = response.data; // 假设返回的数据中包含 token 字段
-
-        // 将 Token 保存到 localStorage 或其他存储中
-        localStorage.setItem('jwtToken', token);
-        localStorage.setItem('nickname', user.nickname);
-        localStorage.setItem('avatar', user.avatar);
-        localStorage.setItem('email', user.email);
-        localStorage.setItem('groupID', user.group_id);
-
-        return token; // 返回 JWT Token
+        return id;
     } catch (error) {
-        console.error('登录失败:', error);
+        console.error('注册失败:', error);
         throw error; // 抛出错误以便处理
     }
 };
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+    const [nickError, setNickError] = React.useState(false);
+    const [nickErrorMessage, setNickErrorMessage] = React.useState('');
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // success or error
@@ -107,34 +91,30 @@ export default function LoginPage() {
         event.preventDefault(); // 确保阻止表单提交
     
         // 如果存在错误，阻止表单提交
-        if (emailError || passwordError) {
-            console.log('表单验证错误');
+        if (emailError || passwordError || nickError) {
             return;
         }
     
         const data = new FormData(event.currentTarget);
         const email = data.get('email');
         const password = data.get('password');
-    
-        console.log('尝试登录，邮箱:', email, '密码:', password);
+        const nickname = data.get('nickname');
     
         try {
             // 阻塞等待 loginUser 完成
-            const token = await loginUser(email, password);
-            console.log('登录成功，Token:', token);
+            const id = await registerUser(email, password,nickname);
+            console.log('注册成功，用户 ID:', id);
     
             // 显示成功通知并跳转到首页
-            setSnackbarMessage('登录成功');
-            setSnackbarSeverity('success');
-            setOpenSnackbar(true);
+            alert('注册成功，激活邮件已发送至您的邮箱，请查收。');
     
             // 跳转到首页
             window.location.href = '/'; // 或者使用 react-router 的 history.push('/') 重定向到首页
     
         } catch (error) {
             // 显示失败通知，留在当前页面
-            console.error('登录失败:', error);
-            setSnackbarMessage('登录失败，请检查用户名或密码');
+            console.error('注册失败:', error);
+            setSnackbarMessage('注册失败，请检查您的输入。');
             setSnackbarSeverity('error');
             setOpenSnackbar(true);
         }
@@ -143,6 +123,7 @@ export default function LoginPage() {
     const validateInputs = () => {
         const email = document.getElementById('email');
         const password = document.getElementById('password');
+        const nickname = document.getElementById('nickname');
 
         let isValid = true;
 
@@ -164,6 +145,12 @@ export default function LoginPage() {
             setPasswordErrorMessage('');
         }
 
+        if(!nickname.value){
+            setNickError(true);
+            setNickErrorMessage('请输入昵称');
+            isValid = false;
+        }
+
         return isValid;
     };
 
@@ -177,7 +164,7 @@ export default function LoginPage() {
                         variant="h4"
                         sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
                     >
-                        登录
+                        注册
                     </Typography>
                     <Box
                         component="form"
@@ -190,6 +177,23 @@ export default function LoginPage() {
                             gap: 2,
                         }}
                     >
+                        <FormControl>
+                            <FormLabel htmlFor="nickname">昵称</FormLabel>
+                            <TextField
+                                error={nickError}
+                                helperText={nickErrorMessage}
+                                id="nickname"
+                                type="nickname"
+                                name="nickname"
+                                placeholder="请输入您的昵称"
+                                autoComplete="nickname"
+                                autoFocus
+                                required
+                                fullWidth
+                                variant="outlined"
+                                color={emailError ? 'error' : 'primary'}
+                            />
+                        </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="email">邮箱</FormLabel>
                             <TextField
@@ -228,19 +232,19 @@ export default function LoginPage() {
                             type="submit"
                             onClick={validateInputs}
                         >
-                            登录
+                            注册
                         </StyledTextButtonSignIn>
                     </Box>
                     <Divider>or</Divider>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <Typography sx={{ textAlign: 'center' }}>
-                            还没有账号？{' '}
+                            已经有账号了？{' '}
                             <Link
-                                href="/register"
+                                href="/login"
                                 variant="body2"
                                 sx={{ alignSelf: 'center' }}
                             >
-                                注册
+                                登录
                             </Link>
                         </Typography>
                     </Box>
