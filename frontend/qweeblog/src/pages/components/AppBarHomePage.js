@@ -82,6 +82,10 @@ export default function AppAppBar() {
         navigate('/login');
     };
 
+    const goToRegister = () => {
+        navigate('/register');
+    };
+
     const goToHome = () => {
         navigate('/');
     };
@@ -153,7 +157,7 @@ export default function AppAppBar() {
                         >
                             {!isTokenValid ? (
                                 <>
-                                    <StyledTextButton variant="text" size="small">
+                                    <StyledTextButton variant="text" size="small" onClick={goToRegister}>
                                         注册
                                     </StyledTextButton>
                                     <StyledTextButtonSignIn variant="contained" size="small" onClick={goToLogin}>
@@ -273,7 +277,7 @@ export default function AppAppBar() {
                                     {!isTokenValid ? (
                                         <>
                                             <MenuItem>
-                                                <StyledTextButtonSignUp variant="text" size="small" fullWidth>
+                                                <StyledTextButtonSignUp variant="text" size="small" fullWidth onClick={goToRegister}>
                                                     注册
                                                 </StyledTextButtonSignUp>
                                             </MenuItem>

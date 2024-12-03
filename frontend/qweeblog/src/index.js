@@ -8,6 +8,21 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ActivatePage from "./pages/ActivatePage";
 import "./index.css";
+import axios from "axios";
+
+// 设置拦截器
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 const rootElement = ReactDOM.createRoot(document.getElementById("root"));
 rootElement.render(
